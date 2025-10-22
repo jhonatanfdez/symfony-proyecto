@@ -20,7 +20,16 @@ final class HomeController extends AbstractController
     public function index(): Response
     {
         return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
+            'page_title' => 'Dashboard',
+            'template_path' => null
+        ]);
+    }
+
+    #[Route('/home/prueba', name: 'app_prueba')]
+    public function prueba(): Response
+    {
+        return $this->render('home/prueba.html.twig', [
+            'page_title' => 'Página de Prueba'
         ]);
     }
 }
