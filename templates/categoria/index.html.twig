@@ -23,6 +23,10 @@
                 <td>
                     <a class="btn btn-info btn-sm" href="{{ path('app_categoria_show', {'id': categorium.id}) }}">Ver</a>
                     <a class="btn btn-warning btn-sm" href="{{ path('app_categoria_edit', {'id': categorium.id}) }}">Editar</a>
+                    <form method="post" action="{{ path('app_categoria_delete', {'id': categorium.id}) }}" style="display: inline-block;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ categorium.id) }}">
+                        <button class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
                 </td>
             </tr>
         {% else %}

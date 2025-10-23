@@ -22,9 +22,9 @@
         </tbody>
     </table>
 
-    <a class="btn btn-secondary" href="{{ path('app_categoria_index') }}">Volver al listado</a>
-
-    <a class="btn btn-info" href="{{ path('app_categoria_edit', {'id': categorium.id}) }}">Editar</a>
-
-    {{ include('categoria/_delete_form.html.twig') }}
+    <div class="mt-3">
+        <a class="btn btn-secondary" href="{{ path('app_categoria_index') }}">Volver al listado</a>
+        <a class="btn btn-info" href="{{ path('app_categoria_edit', {'id': categorium.id}) }}">Editar</a>
+        {{ include('categoria/_delete_form.html.twig') }}
+    </div>
 {% endblock %}
