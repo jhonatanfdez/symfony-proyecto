@@ -38,10 +38,33 @@
                 <td>{{ user.name }}</td>
                 <td>{{ user.fechaCumpleanos ? user.fechaCumpleanos|date('Y-m-d') : '' }}</td>
                 <td>
+                    {# Botón para ver los detalles del usuario #}
                     <a class="btn btn-info btn-sm" href="{{ path('app_user_show', {'id': user.id}) }}">Ver</a>
+
+                    {# Botón para editar el usuario #}
                     <a class="btn btn-warning btn-sm" href="{{ path('app_user_edit', {'id': user.id}) }}">Editar</a>
-                    <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" style="display: inline-block;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
+
+                    {# Formulario inline para eliminar con confirmación SweetAlert2 #}
+                    <form method="post"
+                          action="{{ path('app_user_delete', {'id': user.id}) }}"
+                          style="display: inline-block;"
+                          class="js-delete-form"
+                          data-swal-title="¿Eliminar usuario?"
+                          data-swal-text="Esta acción no se puede deshacer.">
+                        {#
+                            CÓMO FUNCIONA:
+                            1. El usuario hace clic en "Eliminar"
+                            2. El listener global en base.html.twig intercepta el submit
+                            3. Lee los atributos data-swal-title y data-swal-text
+                            4. Muestra un modal SweetAlert2 con dos botones: "Cancelar" y "Sí, eliminar"
+                            5. Solo si confirma, se envía el formulario al servidor
+                            6. Si cancela, el modal se cierra y no pasa nada
+                        #}
+
+                        {# Token CSRF para protección contra ataques CSRF #}
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+
+                        {# Botón que dispara la confirmación SweetAlert2 #}
                         <button class="btn btn-danger btn-sm">Eliminar</button>
                     </form>
                 </td>

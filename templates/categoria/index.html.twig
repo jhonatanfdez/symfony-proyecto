@@ -21,10 +21,29 @@
                 <td>{{ categorium.nombre }}</td>
                 <td>{{ categorium.descripcion }}</td>
                 <td>
+                    {# Botón para ver los detalles de la categoría #}
                     <a class="btn btn-info btn-sm" href="{{ path('app_categoria_show', {'id': categorium.id}) }}">Ver</a>
+
+                    {# Botón para editar la categoría #}
                     <a class="btn btn-warning btn-sm" href="{{ path('app_categoria_edit', {'id': categorium.id}) }}">Editar</a>
-                    <form method="post" action="{{ path('app_categoria_delete', {'id': categorium.id}) }}" style="display: inline-block;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">
+
+                    {# Formulario inline para eliminar con confirmación SweetAlert2 #}
+                    <form method="post"
+                          action="{{ path('app_categoria_delete', {'id': categorium.id}) }}"
+                          style="display: inline-block;"
+                          class="js-delete-form"
+                          data-swal-title="¿Eliminar categoría?"
+                          data-swal-text="Esta acción no se puede deshacer.">
+                        {#
+                            El atributo class="js-delete-form" activa el listener global en base.html.twig
+                            que intercepta el submit y muestra un diálogo SweetAlert2 de confirmación.
+                            El formulario solo se enviará si el usuario confirma la eliminación.
+                        #}
+
+                        {# Token CSRF para seguridad #}
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ categorium.id) }}">
+
+                        {# Botón que dispara la confirmación SweetAlert2 #}
                         <button class="btn btn-danger btn-sm">Eliminar</button>
                     </form>
                 </td>
