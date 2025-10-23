@@ -1,0 +1,14 @@
+{% extends 'home/base.html.twig' %}
+
+{% block title %}Editar Mi Perfil{% endblock %}
+
+{% block content %}
+    <h1>Editar Mi Perfil</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-primary">Actualizar</button>
+    {{ form_end(form) }}
+
+    <a class="btn btn-secondary" href="{{ path('app_profile_show') }}">Volver a mi perfil</a>
+{% endblock %}

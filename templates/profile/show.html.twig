@@ -1,0 +1,48 @@
+{% extends 'home/base.html.twig' %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+    <h1>Mi Perfil</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ user.id }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Roles</th>
+                <td>
+                    {% if user.roles is iterable %}
+                        {% for role in user.roles %}
+                            {% if role == 'ROLE_ADMIN' %}
+                                <span class="badge bg-danger">Administrador</span>
+                            {% elseif role == 'ROLE_USER' %}
+                                <span class="badge bg-success">Usuario</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ role }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <span class="badge bg-secondary">N/D</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ user.name }}</td>
+            </tr>
+            <tr>
+                <th>Fecha de Cumpleaños</th>
+                <td>{{ user.fechaCumpleanos ? user.fechaCumpleanos|date('Y-m-d') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-info" href="{{ path('app_profile_edit') }}">Editar mi perfil</a>
+{% endblock %}

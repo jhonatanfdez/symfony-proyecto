@@ -28,6 +28,7 @@ class UserType extends AbstractType
                 'expanded' => true,   // Muestra como radio buttons en lugar de checkboxes
                 'mapped' => false,    // No mapear directamente a la entidad
                 'data' => $options['data']->getRoles()[0] ?? 'ROLE_USER', // Selecciona el primer rol del array
+                'disabled' => $options['disable_roles'] ?? false, // Deshabilitar si viene la opción
             ])
             // antes
             //->add('password')
@@ -52,6 +53,7 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'disable_roles' => false, // Por defecto, roles están habilitados
         ]);
     }
 }
