@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.3.0] - 2025-10-23
+
+### Added
+- Integración de SweetAlert2 para confirmaciones de eliminación elegantes y modernas.
+- CDN de SweetAlert2 cargado en `templates/home/base.html.twig`.
+- Listener JavaScript global que intercepta formularios con clase `js-delete-form`.
+- Diálogos de confirmación personalizables mediante atributos `data-swal-title`, `data-swal-text`, `data-swal-confirm` y `data-swal-cancel`.
+- Mensajes flash de éxito (verde) al eliminar categorías y usuarios.
+- Sistema de comentarios exhaustivo en español en todos los archivos relacionados:
+  - Templates Twig explicando el flujo de activación de SweetAlert2.
+  - Controllers PHP documentando el flujo completo desde el clic hasta la base de datos.
+  - JavaScript explicando el listener, data attributes, y prevención de doble envío.
+
+### Changed
+- Eliminados `onsubmit="return confirm(...)"` nativos de JavaScript en formularios de eliminación.
+- Formularios de eliminación actualizados con clase `js-delete-form` y atributos `data-swal-*`.
+- Botones de eliminar con texto en español: "Eliminar".
+- Sistema de flash messages documentado con comentarios explicando los 4 tipos (success, error, warning, info).
+
+### Technical
+- Protección contra doble envío usando flag `dataset.confirmed`.
+- Validación CSRF mantenida en todos los endpoints de eliminación.
+- Patrón reutilizable: cualquier formulario nuevo con `class="js-delete-form"` obtendrá confirmación automática.
+
 ## [v1.2.0] - 2025-10-23
 
 ### Added
@@ -41,9 +65,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 - Estructura inicial del proyecto Symfony.
 - Autenticación base (login/logout) y CRUD de Usuarios.
-- Layout con menú lateral y dashboard inicial.
 
 
+[v1.3.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.3.0
 [v1.2.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.2.0
 [v1.1.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.1.0
 [v1.0.1]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.0.1
