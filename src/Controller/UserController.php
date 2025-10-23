@@ -133,21 +133,56 @@ final class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * Elimina un usuario de la base de datos
+     *
+     * FLUJO DE ELIMINACIÓN CON SWEETALERT2:
+     * 1. Usuario hace clic en botón "Eliminar" en el listado (templates/user/index.html.twig)
+     * 2. El formulario tiene la clase "js-delete-form" que activa el listener en base.html.twig
+     * 3. El JavaScript intercepta el submit y muestra un modal SweetAlert2 de confirmación:
+     *    - Título: "¿Eliminar usuario?" (personalizado con data-swal-title)
+     *    - Texto: "Esta acción no se puede deshacer." (personalizado con data-swal-text)
+     *    - Botones: "Cancelar" (gris) y "Sí, eliminar" (rojo)
+     * 4. Si el usuario hace clic en "Cancelar": El modal se cierra, no pasa nada
+     * 5. Si el usuario hace clic en "Sí, eliminar": El formulario se envía a esta ruta (POST)
+     * 6. Este método recibe la petición solo si hubo confirmación
+     * 7. Valida permisos de administrador (AdminAccessGuard)
+     * 8. Valida el token CSRF para seguridad
+     * 9. Elimina el usuario de la base de datos
+     * 10. Muestra mensaje flash de éxito y redirige al listado
+     *
+     * @param Request $request - Objeto con los datos de la petición HTTP
+     * @param User $user - Entidad del usuario a eliminar (inyectada automáticamente por Symfony según el ID)
+     * @param EntityManagerInterface $entityManager - Servicio de Doctrine para operaciones con BD
+     * @param AdminAccessGuard $guard - Servicio personalizado para verificar permisos de administrador
+     * @return Response - Redirección al listado de usuarios
+     */
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager, \App\Security\AdminAccessGuard $guard): Response
     {
+        // Verifica que el usuario tenga ROLE_ADMIN
+        // Si no, redirige a home con flash message de error
         if ($redirect = $guard->maybeRedirect($request, $this->getUser())) {
             return $redirect;
         }
+
+        // Valida el token CSRF para proteger contra ataques de falsificación de peticiones
+        // El token debe coincidir con el generado en el formulario (csrf_token('delete' ~ user.id))
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
+            // Marca la entidad User para ser eliminada
             $entityManager->remove($user);
+
+            // Ejecuta la eliminación en la base de datos (DELETE FROM user WHERE id = ?)
             $entityManager->flush();
 
-             //aqui se añade una variable para el mensaje flash
-
+            // Añade un mensaje flash de éxito que se mostrará en el listado con fondo verde
+            // Este mensaje se renderiza en base.html.twig dentro del bloque de flash messages
+            // El tipo 'success' activa el estilo de alerta verde (alert-success)
             $this->addFlash('success', 'Usuario eliminado exitosamente.');
         }
 
+        // Redirige al listado de usuarios con código HTTP 303 (See Other)
+        // Este código indica que la respuesta se encuentra en otra URI (evita reenvíos duplicados)
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 }
