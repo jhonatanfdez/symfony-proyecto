@@ -1,4 +1,22 @@
-<form method="post" action="{{ path('app_categoria_delete', {'id': categorium.id}) }}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este elemento?');">
+{# Formulario para eliminar una categoría con confirmación SweetAlert2 #}
+<form method="post"
+      action="{{ path('app_categoria_delete', {'id': categorium.id}) }}"
+      class="js-delete-form"
+      data-swal-title="¿Eliminar categoría?"
+      data-swal-text="Esta acción no se puede deshacer.">
+    {#
+        ATRIBUTOS CLAVE:
+        - class="js-delete-form": Activa el listener global de SweetAlert2 en base.html.twig
+        - data-swal-title: Personaliza el título del modal (se lee como form.dataset.swalTitle en JS)
+        - data-swal-text: Personaliza el mensaje del modal (se lee como form.dataset.swalText en JS)
+
+        El script interceptará el submit, mostrará el diálogo de confirmación,
+        y solo enviará el formulario si el usuario confirma la eliminación.
+    #}
+
+    {# Token CSRF para proteger contra ataques de falsificación de peticiones #}
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ categorium.id) }}">
+
+    {# Botón que dispara el submit del formulario (y por ende, la confirmación SweetAlert2) #}
     <button class="btn btn-danger">Eliminar</button>
 </form>
