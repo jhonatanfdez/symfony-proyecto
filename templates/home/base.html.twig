@@ -213,27 +213,35 @@
 
 				<!-- Menú de navegación -->
 				<ul class="nav flex-column">
+					<li class="nav-item text-uppercase text-muted small" style="pointer-events: none;">Usuarios</li>
 					<li class="nav-item">
 						<a class="nav-link {{ current_route == 'app_home' ? 'active' : '' }}" href="{{ path('app_home') }}">Inicio</a>
 					</li>
 
-
-
-
-					<li class="nav-item">
+                    <li class="nav-item">
 						<a class="nav-link {{ current_route == 'app_prueba' ? 'active' : '' }}" href="{{ path('app_prueba') }}">Prueba</a>
 					</li>
+
+                    <li class="nav-item">
+						{# Perfil (show, edit) #}
+						<a class="nav-link {{ current_route starts with 'app_profile_' ? 'active' : '' }}" href="{{ path('app_profile_show') }}">Mi perfil</a>
+					</li>
+
+
+
+
+					{% if is_granted('ROLE_ADMIN') %}
+					<li class="nav-item text-uppercase text-muted small" style="pointer-events: none;">Administrativa</li>
+
 					<li class="nav-item">
 						{# Cualquier ruta que empiece por app_user_ (index, new, show, edit) #}
 						<a class="nav-link {{ current_route starts with 'app_user_' ? 'active' : '' }}" href="{{ path('app_user_index') }}">Usuarios</a>
 					</li>
-					<li class="nav-item">
-						{# Perfil (show, edit) #}
-						<a class="nav-link {{ current_route starts with 'app_profile_' ? 'active' : '' }}" href="{{ path('app_profile_show') }}">Mi perfil</a>
-					</li>
+
 					<li class="nav-item">
 						<a class="nav-link" href="#">Reportes</a>
 					</li>
+					{% endif %}
 				</ul>
 			</aside>
 
