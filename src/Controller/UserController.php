@@ -50,6 +50,9 @@ final class UserController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+             //aqui se añade una variable para el mensaje flash
+            $this->addFlash('success', 'Usuario creado exitosamente.');
+
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -106,6 +109,9 @@ final class UserController extends AbstractController
 
             $entityManager->flush();
 
+            //aqui se añade una variable para el mensaje flash
+            $this->addFlash('success', 'Usuario actualizado exitosamente.');
+
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -121,6 +127,10 @@ final class UserController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($user);
             $entityManager->flush();
+
+             //aqui se añade una variable para el mensaje flash
+
+            $this->addFlash('success', 'Usuario eliminado exitosamente.');
         }
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);

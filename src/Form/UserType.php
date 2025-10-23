@@ -35,8 +35,13 @@ class UserType extends AbstractType
             //ahora
             ->add('password', PasswordType::class, [
                 'label' => 'Contraseña',
-                'required' => false,  // Opcional en edición
-                'mapped' => false,    // No mapear directamente a la entidad
+                'required' => false,      // Opcional en edición (no obligar a cambiarla)
+                'mapped' => false,        // No mapear directamente a la entidad
+                'data' => '',             // Forzar que el campo se renderice vacío
+                'attr' => [               // Sugerencias al navegador para evitar autofill
+                    'autocomplete' => 'new-password',
+                    'placeholder' => 'Deja en blanco para no cambiar',
+                ],
             ])
             ->add('name')
             ->add('fecha_cumpleanos')
