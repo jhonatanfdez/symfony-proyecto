@@ -12,20 +12,26 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/user')]
+#[Route('/admin/user')]
 final class UserController extends AbstractController
 {
     #[Route(name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    public function index(Request $request, UserRepository $userRepository, \App\Security\AdminAccessGuard $guard): Response
     {
+        if ($redirect = $guard->maybeRedirect($request, $this->getUser())) {
+            return $redirect;
+        }
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
         ]);
     }
 
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, \App\Security\AdminAccessGuard $guard): Response
     {
+        if ($redirect = $guard->maybeRedirect($request, $this->getUser())) {
+            return $redirect;
+        }
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -63,16 +69,22 @@ final class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user): Response
+    public function show(Request $request, User $user, \App\Security\AdminAccessGuard $guard): Response
     {
+        if ($redirect = $guard->maybeRedirect($request, $this->getUser())) {
+            return $redirect;
+        }
         return $this->render('user/show.html.twig', [
             'user' => $user,
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, \App\Security\AdminAccessGuard $guard): Response
     {
+        if ($redirect = $guard->maybeRedirect($request, $this->getUser())) {
+            return $redirect;
+        }
         // Guardar los valores originales
         $originalEmail = $user->getEmail();
         $originalName = $user->getName();
@@ -122,8 +134,11 @@ final class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, User $user, EntityManagerInterface $entityManager, \App\Security\AdminAccessGuard $guard): Response
     {
+        if ($redirect = $guard->maybeRedirect($request, $this->getUser())) {
+            return $redirect;
+        }
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($user);
             $entityManager->flush();

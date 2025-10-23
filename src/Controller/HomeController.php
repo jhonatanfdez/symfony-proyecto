@@ -25,9 +25,12 @@ final class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/home/prueba', name: 'app_prueba')]
-    public function prueba(): Response
+    #[Route('/admin/prueba', name: 'app_prueba')]
+    public function prueba(\Symfony\Component\HttpFoundation\Request $request, \App\Security\AdminAccessGuard $guard): Response
     {
+        if ($redirect = $guard->maybeRedirect($request, $this->getUser())) {
+            return $redirect;
+        }
         return $this->render('home/prueba.html.twig', [
             'page_title' => 'Página de Prueba'
         ]);
