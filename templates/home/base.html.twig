@@ -248,7 +248,7 @@
 					</li>
 
 					<li class="nav-item">
-						<a class="nav-link" href="#">Reportes</a>
+						<a class="nav-link {{ current_route == 'app_product_index' ? 'active' : '' }}" href="{{ path('app_product_index') }}">Productos</a>
 					</li>
 					{% endif %}
 				</ul>
