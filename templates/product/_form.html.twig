@@ -1,4 +1,240 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+{#
+    Template Parcial: Formulario Reutilizable de Producto (_form.html.twig)
+
+    PROPÓSITO:
+    - Formulario compartido entre new.html.twig y edit.html.twig
+    - Evita duplicación de código (DRY: Don't Repeat Yourself)
+    - Layout responsive con Bootstrap Grid System
+
+    PARÁMETROS RECIBIDOS:
+    - form: Objeto FormView con los campos del ProductType
+    - button_label (opcional): Texto personalizado del botón submit
+      * Default: 'Guardar'
+      * En new.html.twig: 'Guardar Producto'
+      * En edit.html.twig: 'Actualizar Producto'
+
+    ARQUITECTURA BOOTSTRAP GRID:
+    - Sistema de 12 columnas
+    - Clases col-md-* definen el ancho en pantallas medianas (≥768px)
+    - En móviles (<768px), los col-md-* se convierten automáticamente en col-12 (100%)
+
+    LAYOUT DEL FORMULARIO:
+    ┌─────────────────────────────────────────────────┐
+    │ FILA 1: SKU (50%) + Nombre (50%)                │
+    │ col-md-6 + col-md-6 = 12 columnas ✓             │
+    ├─────────────────────────────────────────────────┤
+    │ FILA 2: Categoría (50%) + Activo (50%)          │
+    │ col-md-6 + col-md-6 = 12 columnas ✓             │
+    ├─────────────────────────────────────────────────┤
+    │ FILA 3: Descripción (100%)                      │
+    │ Sin row/col = ancho completo                    │
+    ├─────────────────────────────────────────────────┤
+    │ FILA 4: Precio (33%) + Costo (33%) + Stock (33%)│
+    │ col-md-4 + col-md-4 + col-md-4 = 12 columnas ✓  │
+    └─────────────────────────────────────────────────┘
+
+    CLASES BOOTSTRAP EXPLICADAS:
+    - row: Contenedor horizontal para columnas
+    - col-md-6: 6/12 columnas = 50% de ancho
+    - col-md-4: 4/12 columnas = 33.33% de ancho
+    - mb-3: Margin-bottom de 3 unidades (espaciado entre filas)
+    - mt-3: Margin-top de 3 unidades (separar botón del formulario)
+    - form-control: Estilo Bootstrap para inputs
+    - form-select: Estilo Bootstrap para selects
+
+    CAMPOS CONFIGURADOS EN ProductType.php:
+    ✅ sku: TextType (código único)
+    ✅ nombre: TextType (obligatorio)
+    ✅ categoria: EntityType (relación ManyToOne obligatoria)
+    ✅ activo: CheckboxType (boolean)
+    ✅ descripcion: TextareaType (opcional, 4 filas)
+    ✅ precio: NumberType (scale=2, min=0, step=0.01)
+    ✅ costo: NumberType (scale=2, min=0, step=0.01)
+    ✅ stock: IntegerType (min=0)
+
+    CAMPOS EXCLUIDOS (NO en el formulario):
+    ❌ id: Clave primaria automática
+    ❌ createdAt: Se setea en constructor de Product
+    ❌ updatedAt: Se actualiza con @PreUpdate callback
+    ❌ createBy: Se setea en ProductController::new() con $this->getUser()
+
+    VALIDACIONES:
+    1. HTML5 (navegador): min, step, required
+       - Mejora UX con feedback inmediato
+       - PUEDE SER BYPASSEADA (deshabilitar JS, editar DOM)
+
+    2. Server-side (PHP): @Assert en Product.php
+       - Validación DEFINITIVA que no puede evitarse
+       - NotBlank, Length, GreaterThanOrEqual, Regex, Type, NotNull
+       - Protege contra envíos directos por cURL/Postman
+
+    ATRIBUTO novalidate:
+    - Desactiva validaciones HTML5 del navegador
+    - Permite que Symfony maneje TODAS las validaciones
+    - Mensajes de error consistentes y traducibles
+#}
+
+{#
+    form_start: Abre el tag <form>
+    - Genera automáticamente: method="post", action, CSRF token
+    - novalidate: Desactiva validaciones HTML5 para usar las de Symfony
+#}
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {# ===== FILA 1: SKU + Nombre ===== #}
+    <div class="row">
+        {#
+            SKU (Stock Keeping Unit): Código único de identificación
+            - col-md-6: 50% de ancho en pantallas medianas+
+            - mb-3: Margen inferior para separar de la siguiente fila
+            - form-control: Clase Bootstrap para estilizar el input
+
+            Validaciones en Product.php:
+            - @Assert\NotBlank: Campo obligatorio
+            - @Assert\Length(max: 50): Máximo 50 caracteres
+            - unique=true en @ORM\Column: No permite duplicados en BD
+        #}
+        <div class="col-md-6 mb-3">
+            {{ form_row(form.sku, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        {#
+            Nombre del producto
+            - col-md-6: Ocupa el otro 50% de la fila (6+6=12 columnas)
+
+            Validaciones:
+            - @Assert\NotBlank
+            - @Assert\Length(max: 180)
+        #}
+        <div class="col-md-6 mb-3">
+            {{ form_row(form.nombre, {'attr': {'class': 'form-control'}}) }}
+        </div>
+    </div>
+
+    {# ===== FILA 2: Categoría + Activo ===== #}
+    <div class="row">
+        {#
+            Categoría: Select con EntityType
+            - Carga todas las categorías desde la BD
+            - Muestra categoria.nombre en el dropdown
+            - Relación ManyToOne obligatoria (nullable=false)
+            - form-select: Clase Bootstrap específica para <select>
+
+            Configurado en ProductType.php:
+            - choice_label: 'nombre' → muestra el nombre de la categoría
+            - placeholder: '-- Selecciona una categoría --'
+            - required: true
+
+            Validación:
+            - @Assert\NotNull: Categoría obligatoria
+        #}
+        <div class="col-md-6 mb-3">
+            {{ form_row(form.categoria, {'attr': {'class': 'form-select'}}) }}
+        </div>
+
+        {#
+            Activo: Checkbox para activar/desactivar producto
+            - col-md-6: 50% de ancho
+            - NO necesita form-control (los checkboxes tienen su propio estilo)
+            - true: Producto visible en el sistema
+            - false: Producto oculto (soft delete lógico)
+
+            VENTAJA del soft delete:
+            - No se pierden datos ni referencias
+            - Se puede reactivar fácilmente
+            - Conserva historial de ventas
+        #}
+        <div class="col-md-6 mb-3">
+            {{ form_row(form.activo) }}
+        </div>
+    </div>
+
+    {#
+        ===== FILA 3: Descripción (ancho completo) =====
+
+        NO usa row ni col porque debe ocupar 100% del ancho
+        TextareaType con 4 filas configuradas
+        Campo opcional (nullable: true en Product.php)
+    #}
+    <div class="mb-3">
+        {{ form_row(form.descripcion, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+    </div>
+
+    {# ===== FILA 4: Precio + Costo + Stock ===== #}
+    <div class="row">
+        {#
+            Precio de Venta
+            - col-md-4: 33.33% de ancho (4/12 columnas)
+            - NumberType con scale=2 (permite 2 decimales)
+            - Tipo de BD: DECIMAL(12,2) → mapeado como string en PHP
+
+            ¿Por qué string y no float?
+            - Los floats tienen problemas de precisión (0.1 + 0.2 ≠ 0.3)
+            - DECIMAL es exacto para dinero
+
+            Validaciones:
+            - @Assert\NotBlank
+            - @Assert\GreaterThanOrEqual(0): No permite negativos
+            - @Assert\Regex: Formato decimal con máximo 2 decimales
+            - HTML5: min="0", step="0.01"
+        #}
+        <div class="col-md-4 mb-3">
+            {{ form_row(form.precio, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        {#
+            Costo de Adquisición/Producción
+            - col-md-4: 33.33% de ancho
+            - Mismas características que precio
+
+            IMPORTANTE: Es información INTERNA
+            - NO debe mostrarse al público
+            - Solo visible para personal administrativo
+            - Se usa para calcular margen: (precio - costo) / precio * 100
+        #}
+        <div class="col-md-4 mb-3">
+            {{ form_row(form.costo, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        {#
+            Stock Disponible
+            - col-md-4: Completa la fila (4+4+4=12 columnas)
+            - IntegerType: Solo acepta números enteros (no 2.5 unidades)
+            - Constructor de Product inicializa en 0 por defecto
+
+            Validaciones:
+            - @Assert\NotBlank
+            - @Assert\Type('integer')
+            - @Assert\GreaterThanOrEqual(0): No permite stock negativo
+            - HTML5: min="0"
+
+            SUGERENCIA FUTURA:
+            Implementar alertas cuando stock < umbral_mínimo (ej: 5 unidades)
+        #}
+        <div class="col-md-4 mb-3">
+            {{ form_row(form.stock, {'attr': {'class': 'form-control'}}) }}
+        </div>
+    </div>
+
+    {#
+        Botón Submit con texto personalizable
+        - mt-3: Margen superior para separar del formulario
+        - btn btn-primary: Botón azul de Bootstrap
+        - button_label|default('Guardar'):
+          * Si se pasa button_label, lo usa
+          * Si no, usa 'Guardar' por defecto
+
+        Valores según template:
+        - new.html.twig: 'Guardar Producto'
+        - edit.html.twig: 'Actualizar Producto'
+    #}
+    <div class="mt-3">
+        <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
+    </div>
+
+{#
+    form_end: Cierra el tag </form>
+    - Renderiza campos ocultos (CSRF token, etc.)
+    - Cierra el formulario correctamente
+#}
 {{ form_end(form) }}

@@ -1,13 +1,140 @@
-{% extends 'base.html.twig' %}
+{#
+    Template: Editar Producto Existente (edit)
 
-{% block title %}Edit Product{% endblock %}
+    PROPÓSITO:
+    - Formulario para modificar un producto existente
+    - Muestra información de auditoría (quién lo creó, cuándo)
+    - Incluye formulario reutilizable _form.html.twig
+    - Permite eliminar el producto
 
-{% block body %}
-    <h1>Edit Product</h1>
+    DATOS RECIBIDOS:
+    - form: Objeto FormView con el formulario ProductType prellenado
+    - product: Objeto Product existente (desde ProductController::edit)
 
-    {{ include('product/_form.html.twig', {'button_label': 'Update'}) }}
+    DIFERENCIAS CON new.html.twig:
+    - SÍ muestra info de auditoría (alert azul con creador y fechas)
+    - Título dinámico con nombre del producto
+    - Label del botón: "Actualizar Producto" vs "Guardar Producto"
+    - Incluye botón "Ver detalle" adicional
+    - Incluye formulario de eliminación
 
-    <a href="{{ path('app_product_index') }}">back to list</a>
+    CARACTERÍSTICAS ESPECIALES:
+    - Alert info con datos de auditoría (SOLO en edit, NO en new)
+    - Acceso a relaciones: product.createBy.name
+    - Formato de fechas personalizado
+    - Lifecycle callback: updatedAt se actualiza automáticamente
 
-    {{ include('product/_delete_form.html.twig') }}
+    FLUJO:
+    1. Usuario modifica campos
+    2. Al enviar, ProductController::edit() valida
+    3. Si es válido:
+       - Doctrine ejecuta UPDATE en BD
+       - Lifecycle callback @PreUpdate actualiza updatedAt
+       - Flash message de éxito
+       - Redirección a listado
+    4. Si hay errores: vuelve a mostrar formulario con mensajes
+#}
+{% extends 'home/base.html.twig' %}
+
+{# Título dinámico: incluye el nombre del producto que se está editando #}
+{% block title %}Editar Producto - {{ product.nombre }}{% endblock %}
+
+{% block content %}
+    <h1>Editar Producto</h1>
+
+    {#
+        ===== BLOQUE DE AUDITORÍA (SOLO EN EDIT) =====
+
+        Este bloque NO aparece en new.html.twig porque el producto aún no existe.
+        Muestra información importante sobre el origen del producto:
+
+        1. Quién lo creó: product.createBy (relación ManyToOne con User)
+        2. Cuándo se creó: product.createdAt (timestamp)
+        3. Última actualización: product.updatedAt (timestamp, puede ser null)
+
+        ACCESO A RELACIONES EN TWIG:
+        - product.createBy → llama a $product->getCreateBy() → retorna objeto User
+        - product.createBy.name → llama a $user->getName() → retorna string
+        - product.createBy.email → llama a $user->getEmail() → retorna string
+
+        OPERADOR ELVIS (?:):
+        {{ product.createBy.name ?: product.createBy.email }}
+        Significa: "Si name tiene valor, muéstralo; sino, muestra email"
+        Útil porque el campo name puede ser null en algunos usuarios
+
+        FILTRO date():
+        {{ product.createdAt|date('d/m/Y') }} → 24/10/2025
+        {{ product.createdAt|date('H:i') }} → 14:30
+
+        CONDICIONAL {% if product.updatedAt %}:
+        Solo muestra la última actualización si existe (no null)
+        updatedAt es null cuando el producto nunca se ha editado
+    #}
+    <div class="alert alert-info mb-3">
+        <strong>📝 Creado por:</strong>
+        {{ product.createBy.name ?: product.createBy.email }}
+        <span class="text-muted">
+            el {{ product.createdAt|date('d/m/Y') }} a las {{ product.createdAt|date('H:i') }}
+        </span>
+        {% if product.updatedAt %}
+            <br>
+            <strong>🔄 Última actualización:</strong>
+            {{ product.updatedAt|date('d/m/Y H:i') }}
+        {% endif %}
+    </div>
+
+    {#
+        Card Bootstrap con el formulario de edición
+        El card-header muestra el nombre y SKU actual del producto
+    #}
+    <div class="card">
+        <div class="card-header">
+            {# Muestra nombre y SKU actual (antes de editar) #}
+            <h5 class="card-title mb-0">{{ product.nombre }} ({{ product.sku }})</h5>
+        </div>
+        <div class="card-body">
+            {#
+                Incluye el formulario parcial reutilizable
+
+                IMPORTANTE: Es el MISMO formulario que en new.html.twig
+                La diferencia es que aquí viene prellenado con los valores actuales
+                del producto (Symfony hace esto automáticamente)
+
+                PARÁMETROS:
+                - button_label: "Actualizar Producto" (en new era "Guardar Producto")
+
+                CAMPOS DEL FORMULARIO (_form.html.twig):
+                1. SKU + Nombre (fila 1, 50% cada uno)
+                2. Categoría + Activo (fila 2, 50% cada uno)
+                3. Descripción (fila 3, 100%)
+                4. Precio + Costo + Stock (fila 4, 33% cada uno)
+
+                CAMPOS EXCLUIDOS (no editables):
+                - id: clave primaria (automático)
+                - createdAt: fecha de creación (solo lectura)
+                - updatedAt: se actualiza automáticamente con @PreUpdate
+                - createBy: usuario creador (no debe cambiar, auditoría)
+            #}
+            {{ include('product/_form.html.twig', {'button_label': 'Actualizar Producto'}) }}
+        </div>
+    </div>
+
+    {# Botones de navegación y acciones #}
+    <div class="mt-3">
+        {# Botón gris: volver sin guardar cambios #}
+        <a class="btn btn-secondary" href="{{ path('app_product_index') }}">Volver al listado</a>
+
+        {# Botón azul: ver la vista detallada (show) del producto #}
+        <a class="btn btn-info" href="{{ path('app_product_show', {'id': product.id}) }}">Ver detalle</a>
+
+        {#
+            Formulario de eliminación con SweetAlert2
+            Incluye el partial _delete_form.html.twig que tiene:
+            - Token CSRF
+            - Clase js-delete-form para activar modal de confirmación
+            - Botón rojo "Eliminar"
+            - Mensaje personalizado con nombre del producto
+        #}
+        {{ include('product/_delete_form.html.twig') }}
+    </div>
 {% endblock %}

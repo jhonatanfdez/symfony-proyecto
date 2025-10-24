@@ -1,4 +1,146 @@
-<form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+{#
+    Template Parcial: Formulario de Eliminación de Producto (_delete_form.html.twig)
+
+    PROPÓSITO:
+    - Formulario inline para eliminar un producto con confirmación SweetAlert2
+    - Reutilizable en show.html.twig y edit.html.twig
+    - Integrado con sistema de confirmación global del layout
+
+    CARACTERÍSTICAS:
+    - Formulario inline (display: inline-block) para aparecer en línea con otros botones
+    - Confirmación elegante con SweetAlert2 (NO usa confirm() nativo)
+    - Token CSRF para seguridad
+    - Mensajes personalizados con nombre del producto
+
+    FLUJO DE FUNCIONAMIENTO:
+
+    1. Usuario hace clic en botón "Eliminar"
+
+    2. Listener JavaScript global (en base.html.twig) detecta:
+       - class="js-delete-form" → Intercepta el submit con preventDefault()
+
+    3. SweetAlert2 muestra modal de confirmación con:
+       - Título: data-swal-title
+       - Texto: data-swal-text (incluye nombre del producto)
+       - Botón confirmar: data-swal-confirm
+       - Botón cancelar: data-swal-cancel
+
+    4. Si usuario CONFIRMA:
+       - form.dataset.confirmed = 'true' (previene loop infinito)
+       - form.submit() → Envía al servidor
+       - ProductController::delete() valida CSRF
+       - Elimina el producto de BD
+       - Flash message de éxito
+       - Redirección a listado
+
+    5. Si usuario CANCELA:
+       - No pasa nada
+       - Modal se cierra
+       - Producto NO se elimina
+
+    SEGURIDAD:
+    - Token CSRF: csrf_token('delete' ~ product.id)
+      * Genera token único por producto
+      * Validado en controlador: isCsrfTokenValid()
+      * Previene ataques CSRF (Cross-Site Request Forgery)
+
+    - Método POST: Los enlaces GET son inseguros para acciones destructivas
+
+    INTEGRACIÓN CON BASE.HTML.TWIG:
+    El script global en base.html.twig tiene un listener que:
+
+    document.addEventListener('submit', function (e) {
+        const form = e.target;
+
+        // FILTRO: Solo procesa formularios con clase js-delete-form
+        if (!form.classList.contains('js-delete-form')) return;
+
+        // Previene doble envío
+        if (form.dataset.confirmed === 'true') return;
+
+        // Detiene el envío para mostrar confirmación
+        e.preventDefault();
+
+        // Lee los textos desde data-swal-*
+        const title = form.dataset.swalTitle || '¿Eliminar?';
+        const text = form.dataset.swalText || 'Esta acción no se puede deshacer.';
+
+        // Muestra SweetAlert2
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: confirmText,
+            cancelButtonText: cancelText,
+            confirmButtonColor: '#d33',  // Rojo (peligro)
+            cancelButtonColor: '#6c757d', // Gris (neutral)
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.dataset.confirmed = 'true';
+                form.submit();  // Ahora SÍ envía el formulario
+            }
+        });
+    });
+
+    VENTAJAS DE ESTE SISTEMA:
+    ✅ Confirmación visual elegante (mejor que confirm() nativo)
+    ✅ Personalizable por producto (muestra el nombre)
+    ✅ Reutilizable (solo añadir clase js-delete-form)
+    ✅ Seguro (CSRF + confirmación)
+    ✅ Previene eliminaciones accidentales
+    ✅ UX consistente en toda la aplicación
+#}
+
+{#
+    Formulario POST para eliminar producto
+    - method="post": Necesario para acciones destructivas (REST: DELETE simulado)
+    - action: Ruta del controlador ProductController::delete
+    - style="display: inline-block": Aparece en línea con otros botones
+    - class="js-delete-form": CRUCIAL - Activa el listener de SweetAlert2
+#}
+<form method="post"
+      action="{{ path('app_product_delete', {'id': product.id}) }}"
+      style="display: inline-block;"
+      class="js-delete-form"
+      data-swal-title="¿Eliminar producto?"
+      data-swal-text="El producto '{{ product.nombre }}' será eliminado permanentemente. Esta acción no se puede deshacer."
+      data-swal-confirm="Sí, eliminar"
+      data-swal-cancel="Cancelar">
+
+    {#
+        Token CSRF (Cross-Site Request Forgery Protection)
+
+        GENERACIÓN:
+        csrf_token('delete' ~ product.id)
+        - 'delete' ~ product.id = 'delete1', 'delete2', etc.
+        - Genera token único por producto
+
+        VALIDACIÓN EN CONTROLADOR:
+        $this->isCsrfTokenValid('delete'.$product->getId(), $request->getPayload()->getString('_token'))
+
+        ¿POR QUÉ ES NECESARIO?
+        Sin CSRF, un atacante podría crear una página maliciosa que envíe
+        requests automáticos al servidor usando la sesión activa del usuario:
+
+        <img src="https://tuapp.com/product/1/delete">
+
+        Con CSRF, el token es único y validado, previniendo estos ataques.
+    #}
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
-    <button class="btn">Delete</button>
+
+    {#
+        Botón Submit con estilo Bootstrap
+        - btn: Clase base de botón Bootstrap
+        - btn-danger: Color rojo (indica acción destructiva/peligrosa)
+        - btn-sm: Tamaño small (más pequeño que btn normal)
+
+        Al hacer clic:
+        1. Submit del formulario se dispara
+        2. Listener JavaScript lo intercepta (preventDefault)
+        3. SweetAlert2 muestra confirmación
+        4. Si confirma, el formulario realmente se envía
+    #}
+    <button class="btn btn-danger btn-sm">Eliminar</button>
 </form>

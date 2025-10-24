@@ -1,51 +1,134 @@
+{#
+    Template: Listado de Productos (index)
+
+    PROPÓSITO:
+    - Muestra tabla con todos los productos del sistema
+    - Permite acceso rápido a Ver, Editar y Eliminar cada producto
+    - Botón para crear nuevos productos
+
+    DATOS RECIBIDOS:
+    - products: Array de objetos Product (desde ProductController::index)
+
+    CARACTERÍSTICAS:
+    - Tabla Bootstrap con estilo striped (filas alternadas)
+    - Badges de color para estado (Activo/Inactivo)
+    - Botones de acción inline con clases Bootstrap
+    - Integración con SweetAlert2 para confirmación de eliminación
+    - Acceso a relaciones: product.categoria.nombre
+#}
 {% extends 'home/base.html.twig' %}
 
-{% block title %}Product index{% endblock %}
+{% block title %}Productos{% endblock %}
 
-{% block content  %}
-    <h1>Product index</h1>
+{% block content %}
+    <h1>Lista de Productos</h1>
 
-    <table class="table">
+    {# Tabla principal con estilo Bootstrap #}
+    <table class="table table-striped">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Sku</th>
+                {# Columnas optimizadas: muestra solo info relevante para el listado #}
+                <th>SKU</th>
                 <th>Nombre</th>
-                <th>Descripcion</th>
+                <th>Categoría</th>
                 <th>Precio</th>
-                <th>Costo</th>
                 <th>Stock</th>
-                <th>Activo</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
-                <th>actions</th>
+                <th>Estado</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
+        {# Loop: itera sobre todos los productos recibidos del controlador #}
         {% for product in products %}
             <tr>
-                <td>{{ product.id }}</td>
+                {# SKU: código único del producto #}
                 <td>{{ product.sku }}</td>
+
+                {# Nombre del producto #}
                 <td>{{ product.nombre }}</td>
-                <td>{{ product.descripcion }}</td>
-                <td>{{ product.precio }}</td>
-                <td>{{ product.costo }}</td>
+
+                {#
+                    Categoría: acceso a relación ManyToOne
+                    product.categoria → Objeto Categoria
+                    product.categoria.nombre → String con el nombre de la categoría
+                #}
+                <td>{{ product.categoria.nombre }}</td>
+
+                {# Precio con símbolo de moneda #}
+                <td>${{ product.precio }}</td>
+
+                {# Stock: cantidad disponible en inventario #}
                 <td>{{ product.stock }}</td>
-                <td>{{ product.activo ? 'Yes' : 'No' }}</td>
-                <td>{{ product.createdAt ? product.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ product.updatedAt ? product.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+
+                {#
+                    Estado: Badge visual con colores Bootstrap
+                    - Verde (bg-success): Producto activo y visible
+                    - Gris (bg-secondary): Producto inactivo (soft delete)
+                #}
                 <td>
-                    <a href="{{ path('app_product_show', {'id': product.id}) }}">show</a>
-                    <a href="{{ path('app_product_edit', {'id': product.id}) }}">edit</a>
+                    {% if product.activo %}
+                        <span class="badge bg-success">Activo</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Inactivo</span>
+                    {% endif %}
+                </td>
+
+                {# Acciones: botones para Ver, Editar y Eliminar #}
+                <td>
+                    {# Botón Ver: redirige a la vista detallada del producto #}
+                    <a class="btn btn-info btn-sm" href="{{ path('app_product_show', {'id': product.id}) }}">Ver</a>
+
+                    {# Botón Editar: redirige al formulario de edición #}
+                    <a class="btn btn-warning btn-sm" href="{{ path('app_product_edit', {'id': product.id}) }}">Editar</a>
+
+                    {#
+                        Formulario de eliminación inline
+                        IMPORTANTE: Se muestra inline con display: inline-block para aparecer en la misma línea
+                    #}
+                    <form method="post"
+                          action="{{ path('app_product_delete', {'id': product.id}) }}"
+                          style="display: inline-block;"
+                          class="js-delete-form"
+                          data-swal-title="¿Eliminar producto?"
+                          data-swal-text="Esta acción no se puede deshacer. El producto '{{ product.nombre }}' será eliminado.">
+                        {#
+                            FUNCIONAMIENTO DEL SISTEMA DE CONFIRMACIÓN:
+
+                            1. class="js-delete-form": Clase especial que activa el listener JavaScript
+                               global definido en base.html.twig
+
+                            2. data-swal-*: Atributos personalizados para configurar el modal SweetAlert2
+                               - data-swal-title: Título del modal
+                               - data-swal-text: Mensaje descriptivo
+                               - Incluye el nombre del producto dinámicamente
+
+                            3. FLUJO DE EJECUCIÓN:
+                               Usuario hace clic en "Eliminar"
+                               → El listener intercepta el submit (preventDefault)
+                               → SweetAlert2 muestra modal de confirmación
+                               → Si usuario confirma: form.submit() (envía a servidor)
+                               → Si usuario cancela: no pasa nada
+
+                            4. SEGURIDAD: Token CSRF incluido para prevenir ataques
+                        #}
+
+                        {# Token CSRF: validado en ProductController::delete #}
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+
+                        {# Botón rojo que dispara la confirmación #}
+                        <button class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
                 </td>
             </tr>
         {% else %}
+            {# Mensaje cuando no hay productos registrados #}
             <tr>
-                <td colspan="11">no records found</td>
+                <td colspan="7">No hay productos registrados</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_product_new') }}">Create new</a>
+    {# Botón para crear nuevo producto (redirige a formulario de creación) #}
+    <a class="btn btn-primary" href="{{ path('app_product_new') }}">Crear nuevo producto</a>
 {% endblock %}

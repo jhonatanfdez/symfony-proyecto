@@ -1,11 +1,59 @@
-{% extends 'base.html.twig' %}
+{#
+    Template: Crear Nuevo Producto (new)
 
-{% block title %}New Product{% endblock %}
+    PROPÓSITO:
+    - Formulario para registrar un nuevo producto en el sistema
+    - Incluye formulario reutilizable _form.html.twig
 
-{% block body %}
-    <h1>Create new Product</h1>
+    DATOS RECIBIDOS:
+    - form: Objeto FormView con el formulario ProductType
+    - product: Objeto Product vacío/nuevo (desde ProductController::new)
 
-    {{ include('product/_form.html.twig') }}
+    CARACTERÍSTICAS:
+    - Card Bootstrap para contener el formulario
+    - Label personalizado del botón: "Guardar Producto"
+    - NO muestra información de auditoría (el producto aún no existe)
+    - El campo createBy se setea automáticamente en el controlador
 
-    <a href="{{ path('app_product_index') }}">back to list</a>
+    FLUJO:
+    1. Usuario llena el formulario
+    2. Al enviar, ProductController::new() valida
+    3. Si es válido:
+       - Se ejecuta $product->setCreateBy($this->getUser())
+       - Se persiste en BD
+       - Flash message de éxito
+       - Redirección a listado
+    4. Si hay errores: vuelve a mostrar formulario con mensajes
+#}
+{% extends 'home/base.html.twig' %}
+
+{% block title %}Nuevo Producto{% endblock %}
+
+{% block content %}
+    <h1>Crear Nuevo Producto</h1>
+
+    {# Card Bootstrap: contenedor con borde redondeado #}
+    <div class="card">
+        <div class="card-body">
+            {#
+                Incluye el formulario parcial reutilizable
+
+                PARÁMETROS:
+                - button_label: Personaliza el texto del botón submit
+                  Si no se pasa, el default en _form.html.twig es 'Guardar'
+
+                El formulario incluido contiene:
+                - 7 campos configurados en layout responsive (Grid Bootstrap)
+                - Validaciones HTML5 (min, step, required)
+                - Validaciones servidor (@Assert en Product entity)
+                - Clases Bootstrap (form-control, form-select)
+            #}
+            {{ include('product/_form.html.twig', {'button_label': 'Guardar Producto'}) }}
+        </div>
+    </div>
+
+    {# Botón para cancelar y volver al listado (sin guardar) #}
+    <div class="mt-3">
+        <a class="btn btn-secondary" href="{{ path('app_product_index') }}">Volver al listado</a>
+    </div>
 {% endblock %}

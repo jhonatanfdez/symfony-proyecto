@@ -1,58 +1,181 @@
-{% extends 'base.html.twig' %}
+{#
+    Template: Vista Detallada de Producto (show)
 
-{% block title %}Product{% endblock %}
+    PROPÓSITO:
+    - Muestra toda la información completa de un producto específico
+    - Vista de solo lectura (no editable)
+    - Incluye información de auditoría (quién lo creó, cuándo)
 
-{% block body %}
-    <h1>Product</h1>
+    DATOS RECIBIDOS:
+    - product: Objeto Product individual (desde ProductController::show)
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ product.id }}</td>
-            </tr>
-            <tr>
-                <th>Sku</th>
-                <td>{{ product.sku }}</td>
-            </tr>
-            <tr>
-                <th>Nombre</th>
-                <td>{{ product.nombre }}</td>
-            </tr>
-            <tr>
-                <th>Descripcion</th>
-                <td>{{ product.descripcion }}</td>
-            </tr>
-            <tr>
-                <th>Precio</th>
-                <td>{{ product.precio }}</td>
-            </tr>
-            <tr>
-                <th>Costo</th>
-                <td>{{ product.costo }}</td>
-            </tr>
-            <tr>
-                <th>Stock</th>
-                <td>{{ product.stock }}</td>
-            </tr>
-            <tr>
-                <th>Activo</th>
-                <td>{{ product.activo ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ product.createdAt ? product.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ product.updatedAt ? product.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+    CARACTERÍSTICAS:
+    - Card Bootstrap para presentación profesional
+    - Tabla bordeada con info completa del producto
+    - Badges con colores dinámicos según stock:
+      * Verde (>10): Stock alto
+      * Amarillo (1-10): Stock bajo
+      * Rojo (0): Sin stock
+    - Filtro nl2br: Convierte saltos de línea en <br> para descripción
+    - Operador ?: para valores por defecto
+    - Formato de fechas: dd/mm/yyyy HH:mm
+    - Botones: Volver, Editar, Eliminar
+#}
+{% extends 'home/base.html.twig' %}
 
-    <a href="{{ path('app_product_index') }}">back to list</a>
+{# Título dinámico con nombre del producto #}
+{% block title %}Producto - {{ product.nombre }}{% endblock %}
 
-    <a href="{{ path('app_product_edit', {'id': product.id}) }}">edit</a>
+{% block content %}
+    <h1>Detalle del Producto</h1>
 
-    {{ include('product/_delete_form.html.twig') }}
+    {# Card Bootstrap: contenedor con borde y sombra #}
+    <div class="card">
+        {# Header del card con nombre del producto #}
+        <div class="card-header">
+            <h5 class="card-title mb-0">{{ product.nombre }}</h5>
+        </div>
+
+        {# Body del card: tabla con todos los datos #}
+        <div class="card-body">
+            <table class="table table-bordered">
+                <tbody>
+                    {# SKU: Código único de identificación #}
+                    <tr>
+                        <th width="25%">SKU</th>
+                        <td>{{ product.sku }}</td>
+                    </tr>
+
+                    {# Nombre del producto #}
+                    <tr>
+                        <th>Nombre</th>
+                        <td>{{ product.nombre }}</td>
+                    </tr>
+
+                    {#
+                        Categoría: Acceso a relación ManyToOne
+                        product.categoria → Objeto Categoria
+                        .nombre → Propiedad del objeto Categoria
+
+                        Equivalente en PHP: $product->getCategoria()->getNombre()
+                    #}
+                    <tr>
+                        <th>Categoría</th>
+                        <td>{{ product.categoria.nombre }}</td>
+                    </tr>
+
+                    {#
+                        Descripción con filtro nl2br y operador Elvis (?:)
+                        - nl2br: Convierte \n en <br> para mostrar saltos de línea
+                        - ?: Si descripcion es null/vacío, muestra texto en cursiva
+                    #}
+                    <tr>
+                        <th>Descripción</th>
+                        <td>{{ product.descripcion|nl2br ?: '<em class="text-muted">Sin descripción</em>' }}</td>
+                    </tr>
+
+                    {#
+                        Precio de Venta: Destacado en verde (text-success)
+                        Este es el precio público, el más importante visualmente
+                    #}
+                    <tr>
+                        <th>Precio de Venta</th>
+                        <td><strong class="text-success">${{ product.precio }}</strong></td>
+                    </tr>
+
+                    {#
+                        Costo: En gris (text-muted) porque es información interna
+                        El costo NO debe mostrarse al público, solo al personal admin
+                    #}
+                    <tr>
+                        <th>Costo</th>
+                        <td class="text-muted">${{ product.costo }}</td>
+                    </tr>
+
+                    {#
+                        Stock con Badge dinámico según cantidad:
+                        - stock > 10: Badge verde (bg-success) - Stock suficiente
+                        - stock > 0 y <= 10: Badge amarillo (bg-warning) - Stock bajo
+                        - stock = 0: Badge rojo (bg-danger) - Sin stock
+                    #}
+                    <tr>
+                        <th>Stock Disponible</th>
+                        <td>
+                            <span class="badge {% if product.stock > 10 %}bg-success{% elseif product.stock > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                                {{ product.stock }} unidades
+                            </span>
+                        </td>
+                    </tr>
+
+                    {#
+                        Estado del producto (Activo/Inactivo)
+                        - Activo (verde): Producto visible en el sistema
+                        - Inactivo (gris): Producto oculto (soft delete lógico)
+                    #}
+                    <tr>
+                        <th>Estado</th>
+                        <td>
+                            {% if product.activo %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactivo</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {#
+                        INFORMACIÓN DE AUDITORÍA:
+                        Campo createBy: Relación ManyToOne con User
+
+                        product.createBy → Objeto User que creó el producto
+                        product.createBy.name → Nombre del usuario (puede ser null)
+                        product.createBy.email → Email del usuario (siempre existe)
+
+                        Operador ?: Si name es null, muestra email como fallback
+
+                        IMPORTANTE: Este campo NO está en el formulario, se setea
+                        automáticamente en ProductController::new() con:
+                        $product->setCreateBy($this->getUser())
+                    #}
+                    <tr>
+                        <th>Creado por</th>
+                        <td>{{ product.createBy.name ?: product.createBy.email }}</td>
+                    </tr>
+
+                    {#
+                        Fecha de creación con formato personalizado
+                        d/m/Y H:i = día/mes/año hora:minuto (24/10/2025 14:30)
+                    #}
+                    <tr>
+                        <th>Fecha de Creación</th>
+                        <td>{{ product.createdAt ? product.createdAt|date('d/m/Y H:i') : '' }}</td>
+                    </tr>
+
+                    {#
+                        Última actualización (puede ser null si nunca se editó)
+                        Operador ?: muestra "Nunca" si updatedAt es null
+
+                        Este campo se actualiza automáticamente gracias al
+                        lifecycle callback PreUpdate en la entidad Product
+                    #}
+                    <tr>
+                        <th>Última Actualización</th>
+                        <td>{{ product.updatedAt ? product.updatedAt|date('d/m/Y H:i') : '<em class="text-muted">Nunca</em>' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {# Botones de acción con margen superior (mt-3) #}
+    <div class="mt-3">
+        {# Botón gris para volver al listado #}
+        <a class="btn btn-secondary" href="{{ path('app_product_index') }}">Volver al listado</a>
+
+        {# Botón amarillo para editar #}
+        <a class="btn btn-warning" href="{{ path('app_product_edit', {'id': product.id}) }}">Editar</a>
+
+        {# Incluye el formulario de eliminación con SweetAlert2 #}
+        {{ include('product/_delete_form.html.twig') }}
+    </div>
 {% endblock %}
