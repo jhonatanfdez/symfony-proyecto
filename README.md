@@ -2,7 +2,7 @@
 
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.3.0 (integración de SweetAlert2 para confirmaciones de eliminación).
+Estado actual: v1.4.0 (sistema completo de gestión de productos con validaciones y auditoría).
 
 ## Objetivo del proyecto
 
@@ -15,7 +15,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - Ventas y clientes (opcional)
 - Reportes (inventario, rotación, ventas, compras)
 
-## Funcionalidades actuales (v1.3.0)
+## Funcionalidades actuales (v1.4.0)
 
 - Autenticación (login/logout)
 - Dashboard con layout responsive (Bootstrap 5)
@@ -24,6 +24,15 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
   - Redirección y mensaje si el usuario no es admin
 - Módulo Usuarios (CRUD) con roles básicos
 - Módulo Categorías (CRUD)
+- **Módulo Productos (CRUD completo)** ⭐ NUEVO
+  - SKU único, nombre, descripción, precio, costo, stock, estado activo/inactivo
+  - Relación con categorías (obligatoria)
+  - Auditoría: registro automático del usuario creador
+  - Validaciones doble capa (HTML5 + servidor)
+  - Soft delete lógico (campo activo para ocultar sin eliminar)
+  - Lifecycle callbacks: actualización automática de `updatedAt`
+  - Protección con AdminAccessGuard en todos los endpoints
+  - Mensajes flash en español para crear/editar/eliminar
 - Confirmaciones de eliminación con SweetAlert2 (modales elegantes)
   - Reutilizable: basta con usar la clase `js-delete-form` en formularios de eliminación
   - Personalizable: `data-swal-title`, `data-swal-text`, `data-swal-confirm`, `data-swal-cancel`
@@ -31,7 +40,8 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 
 ## Próximos módulos (Roadmap)
 
-- Productos (CRUD) con SKU, precio, costo, estado, imágenes
+- ~~Productos (CRUD) con SKU, precio, costo, estado~~ ✅ Completado en v1.4.0
+- Imágenes de productos (upload, gestión, galería)
 - Inventario: existencias, almacenes, movimientos (entradas/salidas/ajustes)
 - Proveedores y compras (OC, recepción, costos)
 - Ventas y clientes (opcional): pedidos, facturación ligera
@@ -53,7 +63,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 
 - Menú lateral con secciones:
   - Usuarios: Inicio, Mi perfil
-  - Administrativa (solo admin): Usuarios, Categorías, Prueba
+  - Administrativa (solo admin): Usuarios, Categorías, Productos, Prueba
 - Prefijo `/admin` para rutas con acceso restringido a administradores
 
 ## Instalación y ejecución
@@ -92,6 +102,29 @@ Notas:
 ```
 
 El script global del layout intercepta el submit, muestra el modal y envía el formulario solo si el usuario confirma.
+
+## Validaciones de formularios (Seguridad)
+
+El sistema implementa **doble capa de validación** para máxima seguridad:
+
+### 1. Validaciones HTML5 (navegador)
+- Mejora la experiencia de usuario con feedback inmediato
+- Atributos: `required`, `min`, `max`, `step`, `pattern`
+- **IMPORTANTE**: Puede ser bypasseada (deshabilitar JS, editar DOM, envío directo por API)
+
+### 2. Validaciones Server-Side (PHP)
+- Constraints `@Assert` en entidades (Product, User, Categoria)
+- Validación **definitiva e infranqueable**
+- Protege contra envíos directos por cURL, Postman, o modificación del HTML
+- Tipos de validaciones usadas:
+  - `@Assert\NotBlank`: campos obligatorios
+  - `@Assert\Length`: longitud mínima/máxima
+  - `@Assert\GreaterThanOrEqual`: valores numéricos no negativos
+  - `@Assert\Regex`: formato específico (decimales, patrones)
+  - `@Assert\Type`: tipo de dato correcto
+  - `@Assert\NotNull`: relaciones obligatorias
+
+**Principio de seguridad**: NUNCA confiar solo en validación del cliente. Siempre validar en el servidor.
 
 ## Seguridad y permisos
 

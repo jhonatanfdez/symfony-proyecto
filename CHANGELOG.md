@@ -4,6 +4,67 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.4.0] - 2025-10-24
+
+### Added
+- **Módulo completo de Productos (CRUD)** bajo `/admin/product`:
+  - Entidad `Product` con 8 campos: id, sku (único), nombre, descripcion, precio, costo, stock, activo, createdAt, updatedAt
+  - Relaciones: `categoria` (ManyToOne obligatoria con RESTRICT), `createBy` (ManyToOne a User para auditoría)
+  - Constructor con valores por defecto: createdAt (actual), activo=true, stock=0
+  - Lifecycle callback `PreUpdate` para actualizar automáticamente `updatedAt`
+- **Validaciones @Assert completas en Product entity**:
+  - `@Assert\NotBlank`: sku, nombre, precio, costo, stock
+  - `@Assert\Length`: sku (max 50), nombre (max 180)
+  - `@Assert\GreaterThanOrEqual(0)`: precio, costo, stock (no negativos)
+  - `@Assert\Regex`: precio y costo (formato decimal con máximo 2 decimales)
+  - `@Assert\Type(integer)`: stock
+  - `@Assert\NotNull`: categoria (relación obligatoria)
+- **Formulario ProductType** con 7 campos configurados:
+  - TextType: sku, nombre
+  - TextareaType: descripcion (opcional)
+  - NumberType: precio, costo (scale=2, min=0, step=0.01)
+  - IntegerType: stock (min=0)
+  - CheckboxType: activo
+  - EntityType: categoria (con placeholder)
+- **ProductController** con protección completa:
+  - Ruta base: `/admin/product`
+  - AdminAccessGuard inyectado en constructor
+  - Guards en todos los métodos: index, new, show, edit, delete
+  - Auditoría: `setCreateBy($this->getUser())` automático en `new()`
+  - Mensajes flash en español: 'Producto creado/actualizado/eliminado exitosamente.'
+  - Tokens CSRF en eliminación
+- **Templates del CRUD de productos**:
+  - `index.html.twig`: listado con tabla Bootstrap
+  - `new.html.twig`: formulario de creación
+  - `edit.html.twig`: formulario de edición con botón eliminar
+  - `show.html.twig`: vista detalle del producto
+  - `_form.html.twig`: formulario parcial reutilizable
+  - `_delete_form.html.twig`: formulario de eliminación con confirmación
+- Enlace "Productos" en menú lateral administrativo con estado activo
+- **Documentación exhaustiva en español**:
+  - PHPDoc completo en Product entity explicando cada campo, validaciones y arquitectura
+  - Comentarios en ProductType sobre doble capa de validación (HTML5 + servidor)
+  - Explicación de seguridad: por qué no confiar solo en validaciones del cliente
+  - Notas sobre soft delete lógico, auditoría y lifecycle callbacks
+
+### Changed
+- Migración de productos ejecutada: tabla `product` con constraints y foreign keys
+- README.md actualizado con funcionalidades de v1.4.0
+- Roadmap actualizado: módulo Productos marcado como completado
+
+### Technical
+- **Doble capa de validación** implementada:
+  - HTML5: feedback inmediato en navegador (puede bypassearse)
+  - Server-side: validación definitiva con @Assert (infranqueable)
+- **Soft delete lógico**: campo `activo` permite ocultar productos sin eliminarlos
+  - Conserva historial de ventas y referencias
+  - Permite reactivación de productos
+  - Mantiene integridad referencial
+- **Auditoría completa**: campo `createBy` registra quién creó cada producto
+- **Validación de unicidad**: SKU con `unique=true` en base de datos
+- **Precisión decimal**: DECIMAL(12,2) mapeado como string para evitar problemas de precisión con floats
+- **Protección de integridad referencial**: `onDelete='RESTRICT'` en relaciones (no permite borrar categoría/usuario con productos asociados)
+
 ## [v1.3.0] - 2025-10-23
 
 ### Added
@@ -67,6 +128,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Autenticación base (login/logout) y CRUD de Usuarios.
 
 
+[v1.4.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.4.0
 [v1.3.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.3.0
 [v1.2.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.2.0
 [v1.1.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.1.0
