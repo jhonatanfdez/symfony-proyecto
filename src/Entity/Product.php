@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * Entidad Product (Producto)
@@ -33,9 +35,14 @@ class Product
      * SKU del producto (código único de identificación)
      * AJUSTE MANUAL: añadido unique=true para garantizar que no haya duplicados
      */
+
+    #[Assert\NotBlank(message: 'El SKU es obligatorio')]
+    #[Assert\Length(max: 50, maxMessage: 'El SKU no puede tener más de {{ limit }} caracteres')]
     #[ORM\Column(length: 50, unique:true)]
     private ?string $sku = null;
 
+    #[Assert\NotBlank(message: 'El nombre del producto es obligatorio')]
+    #[Assert\Length(max: 180, maxMessage: 'El nombre no puede tener más de {{ limit }} caracteres')]
     #[ORM\Column(length: 180)]
     private ?string $nombre = null;
 
@@ -46,23 +53,91 @@ class Product
      * Precio de venta al público
      * AJUSTE MANUAL: precision aumentada de 10 a 12 para mayor capacidad
      * Nota: DECIMAL se mapea como string en PHP para evitar problemas de precisión con floats
+     *
+     * VALIDACIONES APLICADAS:
+     * - @Assert\NotBlank: Campo obligatorio, no puede estar vacío
+     * - @Assert\GreaterThanOrEqual(0): No permite valores negativos (servidor)
+     * - @Assert\Regex: Valida formato decimal con máximo 2 decimales (ej: 99.99, 1000, 15.5)
+     * - HTML5 validations en el formulario: min="0" step="0.01" (navegador)
      */
+    #[Assert\NotBlank(message: 'El precio es obligatorio')]
+    #[Assert\GreaterThanOrEqual(value: 0, message: 'El precio no puede ser un número negativo')]
+    #[Assert\Regex(
+        pattern: '/^\d+(\.\d{1,2})?$/',
+        message: 'El precio debe tener como máximo dos decimales'
+    )]
     #[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 2)]
     private ?string $precio = null;
 
     /**
      * Costo de adquisición o fabricación
      * AJUSTE MANUAL: precision aumentada de 10 a 12 para mayor capacidad
+     *
+     * VALIDACIONES APLICADAS:
+     * - @Assert\NotBlank: Campo obligatorio, no puede estar vacío
+     * - @Assert\GreaterThanOrEqual(0): No permite valores negativos (servidor)
+     * - @Assert\Regex: Valida formato decimal con máximo 2 decimales (ej: 50.25, 100, 7.5)
+     * - HTML5 validations en el formulario: min="0" step="0.01" (navegador)
+     *
+     * NOTA: El costo es información interna y no debería mostrarse al público.
+     * Se usa para calcular margen de ganancia: (precio - costo) / precio * 100
      */
+    #[Assert\NotBlank(message: 'El costo es obligatorio')]
+    #[Assert\GreaterThanOrEqual(value: 0, message: 'El costo no puede ser un número negativo')]
+    #[Assert\Regex(
+        pattern: '/^\d+(\.\d{1,2})?$/',
+        message: 'El costo debe tener como máximo dos decimales'
+    )]
     #[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 2)]
     private ?string $costo = null;
 
+    /**
+     * Cantidad disponible en inventario
+     *
+     * VALIDACIONES APLICADAS:
+     * - @Assert\NotBlank: Campo obligatorio
+     * - @Assert\Type('integer'): Debe ser un número entero (no permite decimales)
+     * - @Assert\GreaterThanOrEqual(0): No permite stock negativo
+     * - HTML5 validations en el formulario: type="number" min="0" (navegador)
+     *
+     * NOTA: El constructor inicializa stock=0 por defecto para nuevos productos.
+     * Considera implementar un sistema de alertas cuando stock < umbral_minimo
+     */
+    #[Assert\NotBlank(message: 'El stock es obligatorio')]
+    #[Assert\Type(
+        type: 'integer',
+        message: 'El stock debe ser un número entero'
+    )]
+    #[Assert\GreaterThanOrEqual(value: 0, message: 'El stock no puede ser un número negativo')]
     #[ORM\Column]
     private ?int $stock = null;
 
+    /**
+     * Estado del producto (activo/inactivo)
+     *
+     * PROPÓSITO:
+     * - true: Producto visible y disponible para la venta
+     * - false: Producto oculto sin eliminarlo de la BD (soft delete lógico)
+     *
+     * VENTAJAS vs eliminar:
+     * - Conserva historial de ventas y referencias
+     * - Permite reactivar productos temporalmente agotados
+     * - Mantiene integridad referencial con otras tablas
+     *
+     * NOTA: El constructor inicializa activo=true por defecto
+     */
     #[ORM\Column]
     private ?bool $activo = null;
 
+    /**
+     * Fecha y hora de creación del producto (auditoría)
+     *
+     * CARACTERÍSTICAS:
+     * - Se setea automáticamente en el constructor con la fecha/hora actual
+     * - Usa DateTimeImmutable (inmutable) para evitar modificaciones accidentales
+     * - NO debe estar en el formulario de producto (es automático)
+     * - Útil para reportes: productos creados por fecha, análisis temporal, etc.
+     */
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -80,6 +155,8 @@ class Product
      * - Añadido nullable=false para hacer la relación obligatoria
      * - Añadido onDelete='RESTRICT' para no permitir borrar una categoría que tiene productos asociados
      */
+
+    #[Assert\NotNull(message: 'Debe seleccionar una categoría')]
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
     private ?Categoria $categoria = null;
