@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.8.0] - 2025-10-25
+
+### Added
+
+- Autenticación: nuevo layout moderno para login y register con diseño glass y animaciones.
+- Branding: incorporación de marca AquaPanel (logo SVG en `public/logo-aquapanel.svg`) y favicon.
+- Home: navbar brand actualizado (logo + AquaPanel) y colores unificados.
+- Registro de usuarios: campos adicionales `name` y `fecha_cumpleanos` con validaciones básicas.
+- Seguridad UX: mensaje flash "Acceso denegado" al intentar acceder a `/home` sin autenticación.
+
+### Changed
+
+- Unificación visual de colores (azules) en páginas de autenticación y layout principal.
+- README actualizado con logo y versión v1.8.0.
+
+### Technical
+
+- Plantillas: `templates/auth/base.html.twig`, `templates/security/login.html.twig`, `templates/registration/register.html.twig`, `templates/home/base.html.twig`.
+- Formulario: `src/Form/RegistrationFormType.php` con nuevos campos.
+
 ## [v1.7.0] - 2025-10-25
 
 ### Added
@@ -227,6 +247,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 
 [v1.5.3]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.3
+[v1.8.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.8.0
 [v1.7.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.7.0
 [v1.6.1]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.1
 [v1.6.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.0
