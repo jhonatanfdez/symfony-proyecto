@@ -123,12 +123,14 @@ class ProductType extends AbstractType
             // html5 comentado: Si se activa, genera <input type="number"> sin decimales
             // min="0": Previene stock negativo en navegador
             // invalid_message: mensaje cuando se ingresa texto en lugar de número
+            // required: false permite que el campo acepte null temporalmente para que las validaciones lo capturen
             //
             // NOTA: El constructor de Product inicializa stock=0 por defecto
             // VALIDACIÓN SERVIDOR: Ver constraints en Product::$stock
             // SUGERENCIA FUTURA: Agregar alertas cuando stock < umbral_minimo (ej: stock < 5)
             ->add('stock', IntegerType::class, [
                 'label' => 'Stock disponible',
+                'required' => false,
                 //'html5' => true,  // Descomentarar para usar <input type="number">
                 'attr' => [
                     'min' => 0,
