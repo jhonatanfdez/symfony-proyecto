@@ -7,9 +7,11 @@
 		<!-- Forzar recarga completa del head cuando se visita esta página con Turbo -->
 		<meta name="turbo-visit-control" content="reload">
 		<title>
-			{% block title %}Panel de Control
+			{% block title %}Aqua Panel
 			{% endblock %}
 		</title>
+
+        <link rel="icon" type="image/svg+xml" href="{{ asset('logo-aquapanel.svg') }}">
 
 
 		{% block stylesheets %}
@@ -23,7 +25,7 @@
 			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 			<style data-turbo-track="reload">
 				:root {
-					--brand-primary: #0d6efd;
+					--brand-primary: #2563eb;
 					--brand-muted: #6c757d;
 					--border-color: #e9ecef;
 					--bg-soft: #f8f9fa;
@@ -56,6 +58,7 @@
 				.top-navbar .nav-link { color: #495057; }
 				.top-navbar .nav-link:hover { color: var(--brand-primary); }
 				.brand-text { font-weight: 600; }
+                .brand-accent { color: var(--brand-primary); font-weight: 700; }
 
 				.layout-wrapper {
 					display: flex;
@@ -272,8 +275,9 @@
 				<button class="btn btn-outline-secondary me-2 sidebar-toggle" id="sidebarToggle" title="Mostrar/Ocultar menú">
 					<i class="fa-solid fa-bars"></i>
 				</button>
-				<a class="navbar-brand d-flex align-items-center" href="{{ path('app_home') }}">
-					<span class="brand-text">Admin</span><span class="text-primary">Panel</span>
+				<a class="navbar-brand d-flex align-items-center gap-2" href="{{ path('app_home') }}">
+					<img src="{{ asset('logo-aquapanel.svg') }}" alt="Aqua Panel" style="width:28px;height:28px;display:block;"/>
+					<span class="brand-text">Aqua</span><span class="brand-accent">Panel</span>
 				</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbarContent" aria-controls="topNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
