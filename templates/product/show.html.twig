@@ -26,6 +26,15 @@
 {# Título dinámico con nombre del producto #}
 {% block title %}Producto - {{ product.nombre }}{% endblock %}
 
+{% block breadcrumbs %}
+  {% include 'partials/_breadcrumbs.html.twig' with {
+    items: [
+      { label: 'Productos', route: 'app_product_index' },
+      { label: product.nombre, active: true }
+    ]
+  } %}
+{% endblock %}
+
 {% block content %}
     <h1>Detalle del Producto</h1>
 

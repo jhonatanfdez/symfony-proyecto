@@ -35,3 +35,11 @@
         </div>
     </div>
 {% endblock %}
+
+{% block breadcrumbs %}
+  {% include 'partials/_breadcrumbs.html.twig' with {
+    items: [
+      { label: 'Prueba', active: true }
+    ]
+  } %}
+{% endblock %}

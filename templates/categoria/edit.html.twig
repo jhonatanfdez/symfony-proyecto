@@ -2,6 +2,15 @@
 
 {% block title %}Editar Categoría{% endblock %}
 
+{% block breadcrumbs %}
+  {% include 'partials/_breadcrumbs.html.twig' with {
+    items: [
+      { label: 'Categorías', route: 'app_categoria_index' },
+      { label: 'Editar', active: true }
+    ]
+  } %}
+{% endblock %}
+
 {% block content %}
     <h1>Editar Categoría</h1>
 

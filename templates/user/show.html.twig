@@ -2,6 +2,15 @@
 
 {% block title %}User{% endblock %}
 
+{% block breadcrumbs %}
+  {% include 'partials/_breadcrumbs.html.twig' with {
+    items: [
+      { label: 'Usuarios', route: 'app_user_index' },
+      { label: user.name, active: true }
+    ]
+  } %}
+{% endblock %}
+
 {% block content %}
     <h1>User</h1>
 

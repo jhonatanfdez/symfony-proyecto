@@ -2,6 +2,15 @@
 
 {% block title %}New User{% endblock %}
 
+{% block breadcrumbs %}
+  {% include 'partials/_breadcrumbs.html.twig' with {
+    items: [
+      { label: 'Usuarios', route: 'app_user_index' },
+      { label: 'Nuevo', active: true }
+    ]
+  } %}
+{% endblock %}
+
 {% block content %}
     <h1>Create new User</h1>
 

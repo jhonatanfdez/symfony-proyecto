@@ -20,6 +20,16 @@
 
 {% block title %}Listado de Productos{% endblock %}
 
+{# Ejemplo de uso de breadcrumbs:
+{% block breadcrumbs %}
+  {% include 'partials/_breadcrumbs.html.twig' with {
+    items: [
+      { label: 'Productos', active: true }
+    ]
+  } %}
+{% endblock %}
+#}
+
 {% block content %}
     <h1>Listado de Productos</h1>
 

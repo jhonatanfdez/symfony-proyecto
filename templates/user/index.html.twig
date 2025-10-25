@@ -2,6 +2,14 @@
 
 {% block title %}Listado de Usuarios{% endblock %}
 
+{% block breadcrumbs %}
+  {% include 'partials/_breadcrumbs.html.twig' with {
+    items: [
+      { label: 'Usuarios', active: true }
+    ]
+  } %}
+{% endblock %}
+
 {% block content %}
     <h1>Listado de Usuarios</h1>
 

@@ -29,6 +29,15 @@
 
 {% block title %}Nuevo Producto{% endblock %}
 
+{% block breadcrumbs %}
+  {% include 'partials/_breadcrumbs.html.twig' with {
+    items: [
+      { label: 'Productos', route: 'app_product_index' },
+      { label: 'Nuevo', active: true }
+    ]
+  } %}
+{% endblock %}
+
 {% block content %}
     <h1>Crear Nuevo Producto</h1>
 
