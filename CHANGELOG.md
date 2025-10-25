@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.6.1] - 2025-10-25
+
+### Removed
+
+- Eliminadas la ruta y la plantilla de diagnóstico `/test-icons` del repositorio.
+  - La interfaz AdminLTE-like y las herramientas de card permanecen intactas.
+
 ## [v1.6.0] - 2025-10-25
 
 ### Added
@@ -201,6 +208,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 
 [v1.5.3]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.3
+[v1.6.1]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.1
 [v1.6.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.0
 [v1.5.2]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.2
 [v1.5.1]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.1
