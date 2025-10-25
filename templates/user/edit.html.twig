@@ -5,10 +5,8 @@
 {% block content %}
     <h1>Edit User</h1>
 
-    {{ include('user/_form.html.twig', {'button_label': 'Actualizar'}) }}
-
-    <div class="mt-3">
-        <a class="btn btn-secondary" href="{{ path('app_user_index') }}">Volver al listado</a>
-        {{ include('user/_delete_form.html.twig') }}
-    </div>
+    {{ include('user/_form.html.twig', {
+        'button_label': 'Actualizar',
+        'extra_buttons': include('user/_delete_form.html.twig')
+    }) }}
 {% endblock %}

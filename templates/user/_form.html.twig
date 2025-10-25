@@ -1,5 +1,9 @@
 {# Forzar navegación completa al enviar para que se muestren los flashes tras redirect #}
 {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
     {{ form_widget(form) }}
-    <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
+    <div class="d-flex gap-2 flex-wrap mt-3">
+        <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
+        <a class="btn btn-secondary" href="{{ path('app_user_index') }}">Volver al listado</a>
+        {{ extra_buttons|default('')|raw }}
+    </div>
 {{ form_end(form) }}
