@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.7.0] - 2025-10-25
+
+### Added
+- Usuarios: campo booleano `activo` en la entidad, migración automática y columna "Estado" en el listado.
+- Usuarios: filtros en el index por texto (nombre/email), rol (ROLE_USER/ROLE_ADMIN) y estado (Activo/Inactivo).
+- Productos: columna "Descripción" en el listado con truncado seguro.
+
+### Changed
+- Buscadores unificados con diseño neutro y alturas consistentes en categorías, productos y usuarios.
+- Productos: simplificado el buscador al modo básico (campo + texto) usando Nombre, SKU o Descripción.
+
+### Fixed
+- Twig: reemplazo del filtro `u.truncate` para evitar dependencia de `twig/string-extra` y errores 500.
+- Productos: limpieza de estilos duplicados que se renderizaban como texto en la tarjeta.
+
+### Technical
+- Migración `Version20251025191354` añade `user.activo TINYINT(1) DEFAULT 1 NOT NULL`.
+- Commit y tag publicados: `v1.7.0`.
+
 ## [v1.6.1] - 2025-10-25
 
 ### Removed
@@ -208,6 +227,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 
 [v1.5.3]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.3
+[v1.7.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.7.0
 [v1.6.1]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.1
 [v1.6.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.0
 [v1.5.2]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.2

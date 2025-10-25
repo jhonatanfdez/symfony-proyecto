@@ -4,12 +4,13 @@
 
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.6.1 — Limpieza de diagnóstico (/test-icons) y ajuste de vistas al componente Card.
+Estado actual: v1.7.0 — Buscadores unificados, mejoras en listados y nuevo estado Activo para usuarios.
 
-• Changelog: ver [v1.6.1 en CHANGELOG.md](CHANGELOG.md#v161---2025-10-25) · Tag: [v1.6.1](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.1)
+• Changelog: ver [v1.7.0 en CHANGELOG.md](CHANGELOG.md#v170---2025-10-25) · Tag: [v1.7.0](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.7.0)
 
 ## Novedades recientes
 
+- v1.7.0: Buscadores unificados (diseño neutro), productos con descripción en listado, simplificación de filtros a campo+texto y usuarios con estado Activo/Inactivo y filtro por rol.
 - v1.6.1: Eliminada la ruta/plantilla de diagnóstico `/test-icons` y migración de vistas a `partials/_card.html.twig` (categorías, productos, usuarios), breadcrumbs minimalistas.
 - v1.6.0: UI AdminLTE-like (fondo gris y cards flotantes), herramientas de card robustas (colapsar/cerrar con fallback Unicode), actualización a Font Awesome 6.4.0.
 
@@ -25,7 +26,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - Ventas y clientes (opcional)
 - Reportes (inventario, rotación, ventas, compras)
 
-## Funcionalidades actuales (v1.6.1)
+## Funcionalidades actuales (v1.7.0)
 
 - Autenticación (login/logout)
 - Dashboard con layout responsive (Bootstrap 5)
