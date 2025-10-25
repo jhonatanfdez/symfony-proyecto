@@ -2,7 +2,7 @@
 
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.5.2 (mejoras en UX, validaciones robustas y visualización de errores).
+Estado actual: v1.5.3 (alineación de botones en formularios, títulos de listados unificados, validaciones y unicidad en Categoría).
 
 ## Objetivo del proyecto
 
@@ -15,7 +15,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - Ventas y clientes (opcional)
 - Reportes (inventario, rotación, ventas, compras)
 
-## Funcionalidades actuales (v1.5.2)
+## Funcionalidades actuales (v1.5.3)
 
 - Autenticación (login/logout)
 - Dashboard con layout responsive (Bootstrap 5)

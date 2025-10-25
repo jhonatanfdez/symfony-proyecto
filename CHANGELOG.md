@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.5.3] - 2025-10-25
+
+### Changed
+
+- UI: Formularios de Usuario y Categoría con botones alineados en una sola fila (Guardar, Volver, Eliminar) usando utilidades Bootstrap (`d-flex`, `gap-2`, `flex-wrap`).
+- UX: Títulos de listados actualizados a formato unificado “Listado de …” para Usuarios, Categorías y Productos.
+
+### Fixed
+
+- Categoría: normalización del nombre con `trim()` para evitar duplicados por espacios.
+
+### Technical
+
+- Validación reforzada en `Categoria`:
+  - `#[UniqueEntity(fields: ['nombre'])]` para unicidad a nivel de aplicación.
+  - Columna `nombre` con `unique: true` y longitud mínima `min=2`.
+  - `descripcion` limitada a `max=2000` caracteres.
+- Migración añadida para el índice único en `categoria.nombre` (Version20251025144724).
+
 ## [v1.5.2] - 2025-10-24
 
 ### Fixed
@@ -163,6 +182,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Autenticación base (login/logout) y CRUD de Usuarios.
 
 
+[v1.5.3]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.3
 [v1.5.2]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.2
 [v1.5.1]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.1
 [v1.4.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.4.0
