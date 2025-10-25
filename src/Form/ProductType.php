@@ -53,14 +53,17 @@ class ProductType extends AbstractType
         $builder
             // SKU: Código único de identificación del producto
             // La unicidad se valida en la entidad con unique=true
+            // empty_data: convierte null a string vacío para que las validaciones funcionen
             ->add('sku', TextType::class, [
                 'label' => 'SKU',
                 'help' => 'Codigo unico de identificación del producto',
+                'empty_data' => '',
             ])
 
             // Nombre del producto (campo obligatorio)
             ->add('nombre', TextType::class, [
                 'label' => 'Nombre del producto',
+                'empty_data' => '',
             ])
 
             // Descripción detallada (campo opcional)
