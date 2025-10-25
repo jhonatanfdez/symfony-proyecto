@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.5.2] - 2025-10-24
+
+### Fixed
+- **Legibilidad de badges de stock**: Añadido `text-dark` a badges con `bg-warning` (amarillo) en vistas de productos para mejorar contraste y legibilidad.
+- **Consistencia en badges de stock**: Unificado texto "N unidades" en templates `index.html.twig` y `show.html.twig` de productos.
+- **Mensajes flash en perfil**: Añadido `data-turbo="false"` al formulario de edición de perfil para garantizar visibilidad de mensajes de éxito tras redirección.
+- **Errores de tipo en formularios**: Implementado `empty_data` en ProductType para prevenir excepciones 500:
+  - `empty_data: ''` en campos de texto (sku, nombre) para convertir null a string vacío.
+  - `empty_data: 0` en campo stock (IntegerType) para convertir null/valores inválidos a 0.
+- **Display de errores de validación**: Reescrito bloque de errores en `_form.html.twig` de productos para iterar `form.children` y mostrar mensajes específicos de cada campo con sus etiquetas correspondientes.
+
+### Changed
+- Template `product/index.html.twig`: Aplicada lógica de badges con colores (verde >10, amarillo 1-10, rojo 0) en lugar de números planos.
+- Template `product/show.html.twig`: Badge de stock con `text-dark` en estado warning.
+- Template `product/_form.html.twig`: Resumen de errores exhaustivo mostrando campo por campo con `error.message`.
+
+### Technical
+- **Arquitectura de validación robusta**: Implementada doble capa de conversión de datos:
+  1. `empty_data` convierte entradas vacías/inválidas a tipos válidos ('' para strings, 0 para integers).
+  2. Validaciones @Assert procesan valores convertidos y muestran mensajes configurados.
+- **UX mejorada**: Usuarios ven errores específicos ("El SKU es obligatorio", "El stock debe ser mayor o igual a 0") en lugar de errores genéricos o pantallas de error 500.
+- **Turbo Drive**: Deshabilitación selectiva en formularios de perfil para compatibilidad con sistema de flash messages.
+
+## [v1.5.1] - 2025-10-24
+
+### Fixed
+- **Formularios con Turbo Drive**: Añadido `data-turbo="false"` a todos los formularios del proyecto para solucionar problemas con mensajes flash y recarga de contenido:
+  - Formularios de Usuario (new, edit)
+  - Formularios de Categoría (new, edit)
+  - Formularios de Producto (new, edit)
+- **Recarga completa en categorías**: Forzada recarga de página completa en formularios de categorías para garantizar sincronización de estado.
+
+### Technical
+- **Compatibilidad Turbo**: Implementación de patrón consistente `data-turbo="false"` en todos los formularios CRUD para evitar conflictos con Hotwire Turbo Drive y sistema de flash messages de Symfony.
+
 ## [v1.4.0] - 2025-10-24
 
 ### Added
@@ -128,6 +163,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Autenticación base (login/logout) y CRUD de Usuarios.
 
 
+[v1.5.2]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.2
+[v1.5.1]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.1
 [v1.4.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.4.0
 [v1.3.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.3.0
 [v1.2.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.2.0

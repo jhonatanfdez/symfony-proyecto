@@ -2,7 +2,7 @@
 
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.4.0 (sistema completo de gestión de productos con validaciones y auditoría).
+Estado actual: v1.5.2 (mejoras en UX, validaciones robustas y visualización de errores).
 
 ## Objetivo del proyecto
 
@@ -15,7 +15,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - Ventas y clientes (opcional)
 - Reportes (inventario, rotación, ventas, compras)
 
-## Funcionalidades actuales (v1.4.0)
+## Funcionalidades actuales (v1.5.2)
 
 - Autenticación (login/logout)
 - Dashboard con layout responsive (Bootstrap 5)
@@ -23,12 +23,21 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - Protección de rutas administrativas bajo prefijo `/admin`
   - Redirección y mensaje si el usuario no es admin
 - Módulo Usuarios (CRUD) con roles básicos
+  - Perfil de usuario (`/profile/miperfil` y `/profile/editar`)
+  - Flash messages funcionando correctamente tras edición de perfil
 - Módulo Categorías (CRUD)
-- **Módulo Productos (CRUD completo)** ⭐ NUEVO
+- **Módulo Productos (CRUD completo)** ⭐
   - SKU único, nombre, descripción, precio, costo, stock, estado activo/inactivo
   - Relación con categorías (obligatoria)
   - Auditoría: registro automático del usuario creador
-  - Validaciones doble capa (HTML5 + servidor)
+  - **Validaciones robustas con manejo de errores mejorado** ⭐ NUEVO
+    - Doble capa: HTML5 + servidor con @Assert
+    - Sistema de errores exhaustivo: muestra todos los errores de validación campo por campo
+    - Prevención de errores 500 con `empty_data` ('' para strings, 0 para integers)
+    - Mensajes específicos por campo con etiquetas descriptivas
+  - **Badges de stock con mejor legibilidad** ⭐ NUEVO
+    - Verde (>10 unidades), Amarillo con texto oscuro (1-10), Rojo (Sin Stock)
+    - Consistencia visual entre listado y vista detallada
   - Soft delete lógico (campo activo para ocultar sin eliminar)
   - Lifecycle callbacks: actualización automática de `updatedAt`
   - Protección con AdminAccessGuard en todos los endpoints
@@ -37,6 +46,9 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
   - Reutilizable: basta con usar la clase `js-delete-form` en formularios de eliminación
   - Personalizable: `data-swal-title`, `data-swal-text`, `data-swal-confirm`, `data-swal-cancel`
   - Prevención de doble envío
+- **Compatibilidad Turbo Drive** ⭐ NUEVO
+  - `data-turbo="false"` en formularios para correcta visualización de mensajes flash
+  - Sincronización de estado garantizada tras operaciones CRUD
 
 ## Próximos módulos (Roadmap)
 
