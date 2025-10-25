@@ -39,30 +39,16 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Crear Nuevo Producto</h1>
-
-    {# Card Bootstrap: contenedor con borde redondeado #}
-    <div class="card">
-        <div class="card-body">
-            {#
-                Incluye el formulario parcial reutilizable
-
-                PARÁMETROS:
-                - button_label: Personaliza el texto del botón submit
-                  Si no se pasa, el default en _form.html.twig es 'Guardar'
-
-                El formulario incluido contiene:
-                - 7 campos configurados en layout responsive (Grid Bootstrap)
-                - Validaciones HTML5 (min, step, required)
-                - Validaciones servidor (@Assert en Product entity)
-                - Clases Bootstrap (form-control, form-select)
-            #}
-            {{ include('product/_form.html.twig', {'button_label': 'Guardar Producto'}) }}
-        </div>
-    </div>
-
-    {# Botón para cancelar y volver al listado (sin guardar) #}
+  {% set cardBody %}
+    {{ include('product/_form.html.twig', {'button_label': 'Guardar Producto'}) }}
     <div class="mt-3">
-        <a class="btn btn-secondary" href="{{ path('app_product_index') }}">Volver al listado</a>
+      <a class="btn btn-secondary" href="{{ path('app_product_index') }}">Volver al listado</a>
     </div>
+  {% endset %}
+
+  {% include 'partials/_card.html.twig' with {
+    title: 'Crear Nuevo Producto',
+    content: cardBody,
+    color: 'light'
+  } %}
 {% endblock %}

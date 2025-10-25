@@ -12,7 +12,13 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Create new User</h1>
-
+  {% set cardBody %}
     {{ include('user/_form.html.twig') }}
+  {% endset %}
+
+  {% include 'partials/_card.html.twig' with {
+    title: 'Crear nuevo usuario',
+    content: cardBody,
+    color: 'light'
+  } %}
 {% endblock %}

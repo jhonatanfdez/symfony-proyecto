@@ -12,7 +12,13 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Crear nueva Categoría</h1>
-
+  {% set cardBody %}
     {{ include('categoria/_form.html.twig') }}
+  {% endset %}
+
+  {% include 'partials/_card.html.twig' with {
+    title: 'Crear nueva Categoría',
+    content: cardBody,
+    color: 'light'
+  } %}
 {% endblock %}

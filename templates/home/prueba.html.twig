@@ -1,37 +1,31 @@
 {% extends 'home/base.html.twig' %}
 
 {% block content %}
-    <h1 class="mb-4">{{ page_title }}</h1>
-
     <div class="row g-4">
         <div class="col-lg-6 col-md-12">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h3 class="card-title">Ejemplo de Contenido</h3>
-                    <p class="card-text">Este es un ejemplo de cómo el contenido toma todo el espacio disponible en la parte derecha.</p>
-                    <p class="card-text">El contenido es completamente responsivo y se adapta al espacio disponible.</p>
-                </div>
-            </div>
+            {% include 'partials/_card.html.twig' with {
+                title: 'Ejemplo de Contenido',
+                content: '<p class="card-text">Este es un ejemplo de cómo el contenido toma todo el espacio disponible en la parte derecha.</p><p class="card-text">El contenido es completamente responsivo y se adapta al espacio disponible.</p>',
+                color: 'primary'
+            } %}
         </div>
         <div class="col-lg-6 col-md-12">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h3 class="card-title">Más Información</h3>
-                    <p class="card-text">Puedes agregar cualquier contenido aquí y se mostrará correctamente en el layout.</p>
-                </div>
-            </div>
+            {% include 'partials/_card.html.twig' with {
+                title: 'Más Información',
+                content: '<p class="card-text">Puedes agregar cualquier contenido aquí y se mostrará correctamente en el layout.</p>',
+                color: 'secondary'
+            } %}
         </div>
     </div>
 
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title">Página de Prueba</h3>
-                    <p class="card-text">Esta es una página de prueba para demostrar cómo funciona el layout base con Bootstrap.</p>
-                    <p class="card-text">Puedes crear tantas páginas como necesites simplemente extendiendo de <code>home/base.html.twig</code> y definiendo el bloque <code>content</code>.</p>
-                </div>
-            </div>
+            {% include 'partials/_card.html.twig' with {
+                title: 'Página de Prueba',
+                content: '<p>Esta es una página de prueba para demostrar cómo funciona el layout base con Bootstrap.</p><p>Puedes crear tantas páginas como necesites simplemente extendiendo de <code>home/base.html.twig</code> y definiendo el bloque <code>content</code>.</p>',
+                footer: '<small class="text-muted">Demostración de íconos de minimizar y cerrar</small>',
+                color: 'light'
+            } %}
         </div>
     </div>
 {% endblock %}

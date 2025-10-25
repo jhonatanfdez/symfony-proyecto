@@ -28,10 +28,10 @@
 #}
 
 <nav aria-label="breadcrumb">
-  <ol class="breadcrumb mb-3">
+  <ol class="breadcrumb mb-0 small">
     {# Enlace inicial a la portada del panel #}
     <li class="breadcrumb-item">
-      <a href="{{ path('app_home') }}">Inicio</a>
+      <a href="{{ path('app_home') }}" title="Inicio"><i class="fa-solid fa-house"></i></a>
     </li>
 
     {# Iteramos los items recibidos #}

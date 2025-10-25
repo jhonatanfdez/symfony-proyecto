@@ -4,15 +4,14 @@
 
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.6.0 — UI AdminLTE-like (fondo gris y cards flotantes), herramientas de card robustas (colapsar/cerrar con fallback Unicode) y cambio a Font Awesome 6.4.0.
+Estado actual: v1.6.1 — Limpieza de diagnóstico (/test-icons) y ajuste de vistas al componente Card.
 
-• Changelog: ver [v1.6.0 en CHANGELOG.md](CHANGELOG.md#v160---2025-10-25) · Tag: [v1.6.0](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.0)
+• Changelog: ver [v1.6.1 en CHANGELOG.md](CHANGELOG.md#v161---2025-10-25) · Tag: [v1.6.1](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.1)
 
-### Novedades v1.6.0 (resumen)
-- Fondo general y del contenido en gris suave `#f4f6f9` al estilo AdminLTE; cards blancas con sombra doble para mejor contraste.
-- Botones de card (minimizar/cerrar) siempre visibles, con mejor área de clic y animación hover.
-- Fallback confiable con símbolos Unicode (− / ×) si Font Awesome no carga.
-- Actualización a CDN de Font Awesome 6.4.0 para mayor estabilidad.
+## Novedades recientes
+
+- v1.6.1: Eliminada la ruta/plantilla de diagnóstico `/test-icons` y migración de vistas a `partials/_card.html.twig` (categorías, productos, usuarios), breadcrumbs minimalistas.
+- v1.6.0: UI AdminLTE-like (fondo gris y cards flotantes), herramientas de card robustas (colapsar/cerrar con fallback Unicode), actualización a Font Awesome 6.4.0.
 
 
 ## Objetivo del proyecto
@@ -26,7 +25,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - Ventas y clientes (opcional)
 - Reportes (inventario, rotación, ventas, compras)
 
-## Funcionalidades actuales (v1.6.0)
+## Funcionalidades actuales (v1.6.1)
 
 - Autenticación (login/logout)
 - Dashboard con layout responsive (Bootstrap 5)
@@ -131,11 +130,13 @@ El script global del layout intercepta el submit, muestra el modal y envía el f
 El sistema implementa **doble capa de validación** para máxima seguridad:
 
 ### 1. Validaciones HTML5 (navegador)
+
 - Mejora la experiencia de usuario con feedback inmediato
 - Atributos: `required`, `min`, `max`, `step`, `pattern`
 - **IMPORTANTE**: Puede ser bypasseada (deshabilitar JS, editar DOM, envío directo por API)
 
 ### 2. Validaciones Server-Side (PHP)
+
 - Constraints `@Assert` en entidades (Product, User, Categoria)
 - Validación **definitiva e infranqueable**
 - Protege contra envíos directos por cURL, Postman, o modificación del HTML

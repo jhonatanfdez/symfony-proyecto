@@ -12,10 +12,16 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Editar Categoría</h1>
-
+  {% set cardBody %}
     {{ include('categoria/_form.html.twig', {
-        'button_label': 'Actualizar',
-        'extra_buttons': include('categoria/_delete_form.html.twig')
+      'button_label': 'Actualizar',
+      'extra_buttons': include('categoria/_delete_form.html.twig')
     }) }}
+  {% endset %}
+
+  {% include 'partials/_card.html.twig' with {
+    title: 'Editar Categoría',
+    content: cardBody,
+    color: 'light'
+  } %}
 {% endblock %}
