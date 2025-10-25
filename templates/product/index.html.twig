@@ -60,9 +60,9 @@
                 {# Stock: cantidad disponible en inventario con badge y colores #}
                 <td>
                     {% if product.stock > 10 %}
-                        <span class="badge bg-success">{{ product.stock }}</span>
+                        <span class="badge bg-success">{{ product.stock }} unidades</span>
                     {% elseif product.stock > 0 %}
-                        <span class="badge bg-warning text-dark">{{ product.stock }}</span>
+                        <span class="badge bg-warning text-dark">{{ product.stock }} unidades</span>
                     {% else %}
                         <span class="badge bg-danger">Sin Stock</span>
                     {% endif %}

@@ -5,7 +5,8 @@
 {% block content %}
     <h1>Editar Mi Perfil</h1>
 
-    {{ form_start(form) }}
+    {# Desactivar Turbo para forzar navegación completa y mostrar flashes tras redirect #}
+    {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
         {{ form_widget(form) }}
         <button class="btn btn-primary">Actualizar</button>
     {{ form_end(form) }}
