@@ -42,6 +42,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $fecha_cumpleanos = null;
 
+    #[ORM\Column(options: ['default' => true])]
+    private ?bool $activo = true;
+
     /**
      * @var Collection<int, Product>
      */
@@ -56,6 +59,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function isActivo(): ?bool
+    {
+        return $this->activo ?? true;
+    }
+
+    public function setActivo(bool $activo): static
+    {
+        $this->activo = $activo;
+        return $this;
     }
 
     public function getEmail(): ?string

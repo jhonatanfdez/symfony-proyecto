@@ -21,8 +21,39 @@ final class UserController extends AbstractController
         if ($redirect = $guard->maybeRedirect($request, $this->getUser())) {
             return $redirect;
         }
+
+        // Parámetros de búsqueda y filtros
+        $field = (string) $request->query->get('field', 'name');
+        $textQuery = trim((string) $request->query->get('query', ''));
+        $role = $request->query->get('role'); // 'ROLE_ADMIN' | 'ROLE_USER' | null
+        $activo = $request->query->get('activo'); // '1' | '0' | null
+
+        $qb = $userRepository->createQueryBuilder('u');
+
+        // Filtro de texto
+        $allowedFields = ['name', 'email'];
+        if ($textQuery !== '' && in_array($field, $allowedFields, true)) {
+            $qb->andWhere($qb->expr()->like("u.$field", ':q'))
+               ->setParameter('q', "%$textQuery%");
+        }
+
+        // Filtro por rol (roles es JSON serializado)
+        if ($role === 'ROLE_ADMIN' || $role === 'ROLE_USER') {
+            $qb->andWhere('u.roles LIKE :roleLike')
+               ->setParameter('roleLike', '%"' . $role . '"%');
+        }
+
+        // Filtro activo/inactivo
+        if ($activo === '1' || $activo === '0') {
+            $qb->andWhere('u.activo = :activo')
+               ->setParameter('activo', $activo === '1');
+        }
+
+        $qb->orderBy('u.name', 'ASC');
+        $users = $qb->getQuery()->getResult();
+
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $users,
         ]);
     }
 

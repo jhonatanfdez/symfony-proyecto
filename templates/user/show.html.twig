@@ -13,18 +13,18 @@
 
 {% block content %}
     {% set cardBody %}
-        <table class="table">
+        <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <th>Id</th>
+                    <th style="width: 200px;">Id</th>
                     <td>{{ user.id }}</td>
                 </tr>
                 <tr>
-                    <th>Email</th>
+                    <th style="width: 200px;">Email</th>
                     <td>{{ user.email }}</td>
                 </tr>
                 <tr>
-                    <th>Roles</th>
+                    <th style="width: 200px;">Roles</th>
                     <td>
                         {% if user.roles is iterable %}
                             {% for role in user.roles %}
@@ -42,11 +42,11 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>Name</th>
+                    <th style="width: 200px;">Name</th>
                     <td>{{ user.name }}</td>
                 </tr>
                 <tr>
-                    <th>Fecha_cumpleanos</th>
+                    <th style="width: 200px;">Fecha_cumpleanos</th>
                     <td>{{ user.fechaCumpleanos ? user.fechaCumpleanos|date('Y-m-d') : '' }}</td>
                 </tr>
             </tbody>
@@ -54,9 +54,11 @@
     {% endset %}
 
     {% set cardFooter %}
-        <a class="btn btn-secondary" href="{{ path('app_user_index') }}">Volver al listado</a>
-        <a class="btn btn-info" href="{{ path('app_user_edit', {'id': user.id}) }}">Editar</a>
-        {{ include('user/_delete_form.html.twig') }}
+        <div class="d-flex gap-2">
+            <a class="btn btn-secondary" href="{{ path('app_user_index') }}">Volver al listado</a>
+            <a class="btn btn-info" href="{{ path('app_user_edit', {'id': user.id}) }}">Editar</a>
+            {{ include('user/_delete_form.html.twig') }}
+        </div>
     {% endset %}
 
     {% include 'partials/_card.html.twig' with {

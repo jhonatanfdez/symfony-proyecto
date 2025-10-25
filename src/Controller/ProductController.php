@@ -28,8 +28,28 @@ final class ProductController extends AbstractController
             return $redirect;
         }
 
+        // Parámetros de búsqueda básicos: campo + texto
+        $field = (string) $request->query->get('field', 'nombre');
+        $textQuery = trim((string) $request->query->get('query', ''));
+
+        $qb = $productRepository->createQueryBuilder('p');
+
+        // Texto libre por campo permitido
+        $allowedFields = ['nombre', 'sku', 'descripcion'];
+        if ($textQuery !== '' && in_array($field, $allowedFields, true)) {
+            $qb->andWhere($qb->expr()->like("p.$field", ':q'))
+               ->setParameter('q', "%$textQuery%");
+        }
+
+        // Nota: filtros por categoría, stock y activo fueron retirados para simplificar la búsqueda
+
+        // Orden por defecto
+        $qb->orderBy('p.nombre', 'ASC');
+
+        $products = $qb->getQuery()->getResult();
+
         return $this->render('product/index.html.twig', [
-            'products' => $productRepository->findAll(),
+            'products' => $products,
         ]);
     }
 

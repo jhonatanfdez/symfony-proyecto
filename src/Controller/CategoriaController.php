@@ -27,8 +27,30 @@ final class CategoriaController extends AbstractController
             return $redirect;
         }
 
+        // Capturar parámetros de búsqueda desde la URL
+        $searchField = $request->query->get('field', 'nombre'); // Default: nombre
+        $searchQuery = $request->query->get('query', '');
+
+        // Si hay una query de búsqueda, filtrar; sino, traer todas
+        if (!empty($searchQuery)) {
+            // Validar que el campo sea uno permitido para evitar inyección SQL
+            $allowedFields = ['nombre', 'descripcion'];
+            if (!in_array($searchField, $allowedFields)) {
+                $searchField = 'nombre';
+            }
+
+            // Buscar con LIKE %query% para coincidir en cualquier parte del texto
+            $categorias = $categoriaRepository->createQueryBuilder('c')
+                ->where("c.$searchField LIKE :query")
+                ->setParameter('query', '%' . $searchQuery . '%')
+                ->getQuery()
+                ->getResult();
+        } else {
+            $categorias = $categoriaRepository->findAll();
+        }
+
         return $this->render('categoria/index.html.twig', [
-            'categorias' => $categoriaRepository->findAll(),
+            'categorias' => $categorias,
         ]);
     }
 
