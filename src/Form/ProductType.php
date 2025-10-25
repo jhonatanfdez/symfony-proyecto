@@ -122,6 +122,7 @@ class ProductType extends AbstractType
             // IntegerType: Solo acepta números enteros (no permite decimales como 2.5 unidades)
             // html5 comentado: Si se activa, genera <input type="number"> sin decimales
             // min="0": Previene stock negativo en navegador
+            // invalid_message: mensaje cuando se ingresa texto en lugar de número
             //
             // NOTA: El constructor de Product inicializa stock=0 por defecto
             // VALIDACIÓN SERVIDOR: Ver constraints en Product::$stock
@@ -134,6 +135,7 @@ class ProductType extends AbstractType
                     'placeholder' => '0',
                 ],
                 'help' => 'Cantidad disponible en inventario',
+                'invalid_message' => 'El stock debe ser un número entero válido',
             ])
 
             // Estado del producto: activo o inactivo
