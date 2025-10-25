@@ -89,16 +89,46 @@
 
     {#
         RESUMEN DE ERRORES DE VALIDACIÓN
-        - Se muestra cuando el formulario fue enviado y tiene errores
-        - Ayuda al usuario a identificar rápidamente que algo falló
-        - Los errores específicos por campo aparecen junto a cada input
+
+        CÓMO FUNCIONA:
+        1. form.vars.submitted: true si el formulario fue enviado
+        2. form.vars.valid: false si hay errores de validación
+        3. Recorremos TODOS los campos del formulario
+        4. Para cada campo que tenga errores, mostramos su mensaje configurado en @Assert
+
+        EJEMPLO:
+        - Stock vacío → "El stock es obligatorio" (de @Assert\NotBlank)
+        - Stock negativo → "El stock no puede ser un número negativo" (de @Assert\GreaterThanOrEqual)
+        - SKU duplicado → "El SKU es obligatorio" (de @Assert\NotBlank)
+
+        Los errores también aparecen junto a cada input gracias a form_row() y Bootstrap 5 theme.
     #}
     {% if form.vars.submitted and not form.vars.valid %}
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>⚠️ Hay errores en el formulario</strong>
-            <p class="mb-0">Por favor, revisa los campos marcados en rojo a continuación:</p>
-            {# Muestra errores globales del formulario si existen #}
-            {{ form_errors(form) }}
+            <p class="mb-2">Por favor, corrige los siguientes problemas:</p>
+
+            <ul class="mb-0">
+                {# Recorrer todos los campos del formulario #}
+                {% for child in form.children %}
+                    {# Si el campo tiene errores, mostrarlos #}
+                    {% if child.vars.errors|length > 0 %}
+                        {% for error in child.vars.errors %}
+                            <li>
+                                <strong>{{ child.vars.label }}:</strong> {{ error.message }}
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+
+                {# Errores globales del formulario (si existen) #}
+                {% if form.vars.errors|length > 0 %}
+                    {% for error in form.vars.errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endif %}
