@@ -1,8 +1,19 @@
 # Sistema de Gestión de Productos (Symfony)
 
+![latest-tag](https://img.shields.io/github/v/tag/jhonatanfdez/symfony-proyecto?label=version&color=0d6efd)
+
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.5.3 (alineación de botones en formularios, títulos de listados unificados, validaciones y unicidad en Categoría).
+Estado actual: v1.6.0 — UI AdminLTE-like (fondo gris y cards flotantes), herramientas de card robustas (colapsar/cerrar con fallback Unicode), cambio a Font Awesome 6.4.0 y página de diagnóstico `/test-icons`.
+
+• Changelog: ver [v1.6.0 en CHANGELOG.md](CHANGELOG.md#v160---2025-10-25) · Tag: [v1.6.0](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.0)
+
+### Novedades v1.6.0 (resumen)
+- Fondo general y del contenido en gris suave `#f4f6f9` al estilo AdminLTE; cards blancas con sombra doble para mejor contraste.
+- Botones de card (minimizar/cerrar) siempre visibles, con mejor área de clic y animación hover.
+- Fallback confiable con símbolos Unicode (− / ×) si Font Awesome no carga.
+- Actualización a CDN de Font Awesome 6.4.0 para mayor estabilidad.
+- Página de diagnóstico `/test-icons` (solo dev/QA) para verificar íconos y comportamiento de las cards.
 
 ## Objetivo del proyecto
 
@@ -15,7 +26,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - Ventas y clientes (opcional)
 - Reportes (inventario, rotación, ventas, compras)
 
-## Funcionalidades actuales (v1.5.3)
+## Funcionalidades actuales (v1.6.0)
 
 - Autenticación (login/logout)
 - Dashboard con layout responsive (Bootstrap 5)
