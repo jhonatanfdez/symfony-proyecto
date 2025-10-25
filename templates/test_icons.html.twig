@@ -1,0 +1,41 @@
+{% extends 'home/base.html.twig' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Test de Iconos Font Awesome</h1>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3>Iconos individuales (deberían verse):</h3>
+            <p style="font-size: 2rem;">
+                <i class="fas fa-minus"></i> fa-minus (clase fas)
+                <i class="fa-solid fa-minus"></i> fa-minus (clase fa-solid)
+                <i class="fas fa-times"></i> fa-times (clase fas)
+                <i class="fa-solid fa-xmark"></i> fa-xmark (clase fa-solid)
+            </p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3>Botones con iconos (como en cards):</h3>
+            <button type="button" class="card-tool btn-card-collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="card-tool btn-card-remove">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3>Card de prueba:</h3>
+            {% include 'partials/_card.html.twig' with {
+                title: 'Tarjeta de Prueba',
+                content: '<p>Si no ves los iconos arriba a la derecha, hay un problema con Font Awesome.</p>'
+            } %}
+        </div>
+    </div>
+</div>
+{% endblock %}
