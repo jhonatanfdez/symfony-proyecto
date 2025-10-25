@@ -87,6 +87,22 @@
 #}
 {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false'}}) }}
 
+    {#
+        RESUMEN DE ERRORES DE VALIDACIÓN
+        - Se muestra cuando el formulario fue enviado y tiene errores
+        - Ayuda al usuario a identificar rápidamente que algo falló
+        - Los errores específicos por campo aparecen junto a cada input
+    #}
+    {% if form.vars.submitted and not form.vars.valid %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>⚠️ Hay errores en el formulario</strong>
+            <p class="mb-0">Por favor, revisa los campos marcados en rojo a continuación:</p>
+            {# Muestra errores globales del formulario si existen #}
+            {{ form_errors(form) }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+
     {# ===== FILA 1: SKU + Nombre ===== #}
     <div class="row">
         {#
