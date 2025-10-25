@@ -13,44 +13,49 @@
 
 
 		{% block stylesheets %}
-			<!-- Bootstrap CSS -->
-			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" data-turbo-track="reload">
+		<!-- Bootstrap CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" data-turbo-track="reload">
+		<!-- Font Awesome Icons - usando CDN diferente -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<!-- Fuente moderna y legible -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 			<style data-turbo-track="reload">
+				:root {
+					--brand-primary: #0d6efd;
+					--brand-muted: #6c757d;
+					--border-color: #e9ecef;
+					--bg-soft: #f8f9fa;
+					--radius-sm: .375rem;
+					--radius-md: .5rem;
+					--shadow-sm: 0 .125rem .25rem rgba(0,0,0,.075);
+				}
 				* {
 					margin: 0;
 					padding: 0;
 					box-sizing: border-box;
 				}
 
-				html,
-				body {
-					margin: 0;
-					padding: 0;
-					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-					overflow-x: hidden;
-					height: 100%;
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+				font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+				overflow-x: hidden;
+				height: 100%;
+				background: #f4f6f9; /* Fondo gris claro como AdminLTE */
+			}				/* Navbar superior */
+				.top-navbar {
+					border-bottom: 1px solid #e5e7eb;
+					background: #ffffff;
+					position: sticky;
+					top: 0;
+					z-index: 1030;
 				}
-
-				.header-title {
-					background: #0d6efd;
-					color: white;
-					padding: 1.2rem;
-					text-align: center;
-					font-size: 1.5rem;
-					font-weight: bold;
-					width: 100%;
-				}
-
-				.horizontal-menu {
-					background: #f8f9fa;
-					border-bottom: 2px solid #dee2e6;
-					width: 100%;
-					padding: 0;
-				}
-
-				.horizontal-menu .nav {
-					padding: 0.5rem 1rem;
-				}
+				.top-navbar .nav-link { color: #495057; }
+				.top-navbar .nav-link:hover { color: var(--brand-primary); }
+				.brand-text { font-weight: 600; }
 
 				.layout-wrapper {
 					display: flex;
@@ -61,17 +66,19 @@
 				.sidebar {
 					width: 250px;
 					min-width: 250px;
-					background: #f8f9fa;
-					border-right: 2px solid #dee2e6;
+					background: var(--bg-soft);
+					border-right: 1px solid var(--border-color);
 					padding: 1rem;
 					overflow-y: auto;
 				}
+				.sidebar.collapsed { width: 0; min-width: 0; padding: 0; border-right: 0; overflow: hidden; }
+				.sidebar-toggle { cursor: pointer; }
 
 				.sidebar .user-info {
 					background: #e9ecef;
 					padding: 1rem;
 					margin-bottom: 1rem;
-					border-radius: 0.375rem;
+					border-radius: var(--radius-sm);
 				}
 
 				.sidebar .user-info p {
@@ -81,26 +88,18 @@
 
 				.sidebar .nav-link {
 					color: #212529;
-					padding: 0.75rem 1rem;
-					border-radius: 0.375rem;
+					padding: 0.5rem 0.75rem;
+					border-radius: var(--radius-sm);
 					margin-bottom: 0.25rem;
-					transition: all 0.2s;
+					transition: background .2s ease, color .2s ease, padding-left .2s ease;
 				}
-
-				.sidebar .nav-link:hover {
-					background: #0d6efd;
-					color: white;
-				}
-
-				.sidebar .nav-link.active {
-					background: #0d6efd;
-					color: white;
-				}
+				.sidebar .nav-link:hover { background: #e7f1ff; color: #0a58ca; padding-left: 1rem; }
+				.sidebar .nav-link.active { background: #e7f1ff; color: #0a58ca; border-left: 3px solid var(--brand-primary); }
 
 				.main-content {
 					flex: 1;
-					padding: 2rem;
-					background: #ffffff;
+					padding: 1.25rem 1.5rem 2.5rem;
+					background: #f4f6f9; /* Fondo gris claro AdminLTE */
 					width: 100%;
 					overflow-x: hidden;
 				}
@@ -108,6 +107,63 @@
 				.main-content h1 {
 					margin-bottom: 1.5rem;
 				}
+
+				/* Encabezado de contenido con breadcrumbs a la derecha */
+				.content-header { border-bottom: 1px solid var(--border-color); padding-bottom: .75rem; margin-bottom: 1rem; }
+				.content-header h1 { font-size: 1.25rem; margin: 0; }
+
+			/* Card tools (minimizar/cerrar) */
+			.card {
+				box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+				border: 0;
+				border-radius: var(--radius-md);
+				background: #ffffff;
+			}
+			.card-header { background: #fff; border-bottom: 1px solid var(--border-color); }
+			.card-title { font-size: 1rem; font-weight: 600; }
+			.card-tools { display: flex; align-items: center; gap: .5rem; }
+			.card-tool {
+				border: 0;
+				background: transparent;
+				color: #6c757d;
+				padding: .5rem;
+				cursor: pointer;
+				font-size: 1rem;
+				line-height: 1;
+				transition: all .2s ease;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				min-width: 30px;
+				min-height: 30px;
+			}
+			.card-tool:hover {
+				color: #495057;
+				background: #f8f9fa;
+				border-radius: .25rem;
+			}
+			.card-tool i {
+				font-size: 1rem;
+				line-height: 1;
+			}
+
+			/* Asegurar que Font Awesome se renderice correctamente */
+			.fas, .fa-solid {
+				font-family: "Font Awesome 6 Free";
+				font-weight: 900;
+			}
+
+			.card-collapsed .card-body, .card-collapsed .card-footer { display: none; }				/* Breadcrumbs minimalistas */
+				.breadcrumb { margin-bottom: 0; --bs-breadcrumb-divider-color: #adb5bd; }
+				.breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: #adb5bd; }
+				.breadcrumb .breadcrumb-item a { color: #6c757d; text-decoration: none; }
+				.breadcrumb .breadcrumb-item a:hover { color: #495057; text-decoration: underline; }
+
+				/* Tablas y contenido dentro de cards */
+				.card-body { overflow-x: auto; }
+				.table th { font-weight: 600; color: #495057; }
+				.table td, .table th { vertical-align: middle; }
+				.table tr:last-child td { border-bottom: 0; }
 
 				@media(max-width: 992px) {
 					.layout-wrapper {
@@ -155,8 +211,49 @@
 					width: 100%;
 					z-index: 1000;
 				}
-			</style>
-		{% endblock %}
+		</style>
+
+	<!-- Estilos finales para card tools -->
+	<style>
+		.card-tool {
+			border: 0;
+			background: transparent;
+			color: #6c757d;
+			font-size: 1rem;
+			padding: .375rem .5rem;
+			min-width: 28px;
+			min-height: 28px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: all .2s ease;
+			border-radius: .25rem;
+		}
+		.card-tool:hover {
+			color: #495057;
+			background: #f8f9fa;
+		}
+
+		/* Usar símbolos Unicode como respaldo confiable */
+		.btn-card-collapse::before {
+			content: "−";
+			font-size: 1.125rem;
+			font-weight: 600;
+			line-height: 1;
+		}
+		.btn-card-remove::before {
+			content: "×";
+			font-size: 1.375rem;
+			font-weight: 400;
+			line-height: 1;
+		}
+		.btn-card-collapse i,
+		.btn-card-remove i {
+			display: none;
+		}
+	</style>
+{% endblock %}
 		{% block javascripts %}
 
 			{% block importmap %}
@@ -169,28 +266,30 @@
 		{% endblock %}
 	</head>
 	<body>
-		<!-- Título principal -->
-		<div class="header-title">
-			PANEL DE CONTROL
-		</div>
-
-		<!-- Menú horizontal secundario -->
-		<nav class="horizontal-menu">
-
-			<ul class="nav nav-pills nav-fill">
-				<li class="nav-item">
-					<a class="nav-link active" aria-current="page" href="#">Active</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#">Link</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#">Link</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link disabled" aria-disabled="true">Disabled</a>
-				</li>
-			</ul>
+		<!-- Navbar superior -->
+		<nav class="navbar navbar-expand-lg top-navbar px-3">
+			<div class="container-fluid">
+				<button class="btn btn-outline-secondary me-2 sidebar-toggle" id="sidebarToggle" title="Mostrar/Ocultar menú">
+					<i class="fa-solid fa-bars"></i>
+				</button>
+				<a class="navbar-brand d-flex align-items-center" href="{{ path('app_home') }}">
+					<span class="brand-text">Admin</span><span class="text-primary">Panel</span>
+				</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbarContent" aria-controls="topNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="topNavbarContent">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}">Home</a></li>
+						<li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+					</ul>
+					<ul class="navbar-nav ms-auto">
+						<li class="nav-item me-2"><a class="nav-link" href="#" title="Notificaciones"><i class="fa-regular fa-bell"></i></a></li>
+						<li class="nav-item me-2"><a class="nav-link" href="#" title="Mensajes"><i class="fa-regular fa-envelope"></i></a></li>
+						<li class="nav-item"><a class="nav-link" href="#" title="Perfil"><i class="fa-regular fa-user"></i></a></li>
+					</ul>
+				</div>
+			</div>
 		</nav>
 
 
@@ -199,7 +298,7 @@
 			class="layout-wrapper">
 			<!-- Menú lateral -->
 			<aside
-				class="sidebar">
+				class="sidebar" id="appSidebar">
 				{# Ruta actual para marcar enlaces activos #}
 				{% set current_route = app.request.attributes.get('_route') %}
 				<!-- Información del usuario -->
@@ -258,6 +357,14 @@
 
 			<!-- Contenido principal -->
 			<main class="main-content">
+				<div class="content-header d-flex align-items-center justify-content-between">
+					<h1 class="m-0">{% block page_heading %}{{ block('title') }}{% endblock %}</h1>
+					<div class="ms-auto">
+						{% block breadcrumbs %}
+							{% include 'partials/_breadcrumbs.html.twig' with { items: [ { label: 'Dashboard', active: true } ] } %}
+						{% endblock %}
+					</div>
+				</div>
 				{# SISTEMA DE MENSAJES FLASH
 				   Los mensajes flash son notificaciones temporales que se muestran después de una acción.
 				   Se añaden desde los controladores con: $this->addFlash('tipo', 'mensaje');
@@ -292,58 +399,7 @@
 					{% endfor %}
 				{% endfor %}
 
-				{# BREADCRUMBS (Migas de pan)
-				   Este bloque permite a cada vista insertar su propio rastro de navegación.
-				   Ejemplo de uso en una plantilla hija:
-				   {% block breadcrumbs %}
-					 {% include 'partials/_breadcrumbs.html.twig' with {
-					   items: [
-						 { label: 'Usuarios', route: 'app_user_index' },
-						 { label: 'Editar', active: true }
-					   ]
-					 } %}
-				   {% endblock %}
-				#}
-				{% block breadcrumbs %}
-					{% include 'partials/_breadcrumbs.html.twig' with {
-						items: [
-							{ label: 'Dashboard', active: true }
-						]
-					} %}
-				{% endblock %}
-				<!-- Mensajes Flash -->
-					{% for label, messages in app.flashes %}
-						{% for message in messages %}
-						{# Mensaje de ÉXITO - Fondo verde (Bootstrap: alert-success) #}
-							{% if label == 'success' %}
-								<div class="alert alert-success alert-dismissible fade show" role="alert"> <strong>✓ Éxito:</strong>
-								{{ message }}
-								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-							</div>
-							{# Mensaje de ERROR - Fondo rojo (Bootstrap: alert-danger) #}
-						{% elseif label == 'error' %}
-							<div class="alert alert-danger alert-dismissible fade show" role="alert">
-								<strong>✗ Error:</strong>
-								{{ message }}
-								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-							</div>
-							{# Mensaje de ADVERTENCIA - Fondo amarillo (Bootstrap: alert-warning) #}
-						{% elseif label == 'warning' %}
-							<div class="alert alert-warning alert-dismissible fade show" role="alert">
-								<strong>⚠ Advertencia:</strong>
-								{{ message }}
-								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-							</div>
-							{# Mensaje de INFORMACIÓN - Fondo azul (Bootstrap: alert-info) #}
-						{% elseif label == 'info' %}
-							<div class="alert alert-info alert-dismissible fade show" role="alert">
-								<strong>ℹ Info:</strong>
-								{{ message }}
-								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-							</div>
-						{% endif %}
-					{% endfor %}
-				{% endfor %}
+				{# (Breadcrumbs ya se renderiza arriba en la cabecera de contenido) #}
 
 				{% block content %}
 					{% if template_path is defined %}
@@ -361,6 +417,27 @@
 
 		<!-- Script global: confirmación SweetAlert2 para formularios de eliminar -->
 		<script>
+			// Toggle del sidebar
+			document.getElementById('sidebarToggle')?.addEventListener('click', function () {
+				const sb = document.getElementById('appSidebar');
+				if (!sb) return;
+				sb.classList.toggle('collapsed');
+			});
+
+			// Herramientas de Card: colapsar y cerrar (compat: data-card-tool o data-card-widget)
+			document.addEventListener('click', function(e){
+				const btn = e.target.closest('[data-card-tool], [data-card-widget]');
+				if (!btn) return;
+				const card = btn.closest('.card');
+				if (!card) return;
+				const action = btn.getAttribute('data-card-tool') || btn.getAttribute('data-card-widget');
+				if (action === 'collapse') {
+					card.classList.toggle('card-collapsed');
+				} else if (action === 'remove') {
+					card.remove();
+				}
+			});
+
 			// Listener global que escucha TODOS los eventos 'submit' del documento
 document.addEventListener('submit', function (e) { // Capturamos el elemento que disparó el evento (el formulario)
 const form = e.target;

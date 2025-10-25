@@ -1,0 +1,51 @@
+{#
+  Partial de tarjeta con acciones (colapsar y cerrar), inspirado en AdminLTE
+
+  Uso básico:
+
+  {% include 'partials/_card.html.twig' with {
+     title: 'Mi tarjeta',
+     content: include('ruta/a/otro_partial.html.twig'),
+     footer: '<small class="text-muted">Actualizado hoy</small>',
+     color: 'primary',          # opcional: primary|secondary|success|warning|danger|info|light|dark
+     collapsible: true,         # opcional (true por defecto)
+     removable: true            # opcional (true por defecto)
+  } %}
+
+  También puedes pasar contenido inline:
+
+  {% include 'partials/_card.html.twig' with {
+     title: 'Demo',
+     content: '<p>Contenido en HTML</p>'
+  } %}
+#}
+
+{% set _collapsible = collapsible is not defined or collapsible %}
+{% set _removable   = removable is not defined or removable %}
+{% set _color       = color|default('light') %}
+
+<div class="card border-{{ _color }} shadow-sm mb-4 rounded-3">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h5 class="card-title mb-0">{{ title|default('Card') }}</h5>
+    <div class="card-tools">
+      {% if _collapsible %}
+        <button type="button" class="card-tool btn-card-collapse" data-card-tool="collapse" title="Minimizar">
+          <i class="fas fa-minus"></i>
+        </button>
+      {% endif %}
+      {% if _removable %}
+        <button type="button" class="card-tool btn-card-remove" data-card-tool="remove" title="Cerrar">
+          <i class="fas fa-times"></i>
+        </button>
+      {% endif %}
+    </div>
+  </div>
+  <div class="card-body">
+    {{ content|default('')|raw }}
+  </div>
+  {% if footer is defined and footer %}
+    <div class="card-footer">
+      {{ footer|raw }}
+    </div>
+  {% endif %}
+</div>
