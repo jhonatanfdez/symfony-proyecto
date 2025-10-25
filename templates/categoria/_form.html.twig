@@ -5,5 +5,10 @@
 #}
 {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
     {{ form_widget(form) }}
-    <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
+    <div class="d-flex gap-2 flex-wrap mt-3">
+        <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
+        <a class="btn btn-secondary" href="{{ path('app_categoria_index') }}">Volver al listado</a>
+        {# Permite inyectar botones/acciones extra desde la plantilla que incluye este partial (por ejemplo, borrar) #}
+        {{ extra_buttons|default('')|raw }}
+    </div>
 {{ form_end(form) }}
