@@ -57,8 +57,16 @@
                 {# Precio con símbolo de moneda #}
                 <td>${{ product.precio }}</td>
 
-                {# Stock: cantidad disponible en inventario #}
-                <td>{{ product.stock }}</td>
+                {# Stock: cantidad disponible en inventario con badge y colores #}
+                <td>
+                    {% if product.stock > 10 %}
+                        <span class="badge bg-success">{{ product.stock }}</span>
+                    {% elseif product.stock > 0 %}
+                        <span class="badge bg-warning text-dark">{{ product.stock }}</span>
+                    {% else %}
+                        <span class="badge bg-danger">Sin Stock</span>
+                    {% endif %}
+                </td>
 
                 {#
                     Estado: Badge visual con colores Bootstrap

@@ -101,7 +101,7 @@
                     <tr>
                         <th>Stock Disponible</th>
                         <td>
-                            <span class="badge {% if product.stock > 10 %}bg-success{% elseif product.stock > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                            <span class="badge {% if product.stock > 10 %}bg-success{% elseif product.stock > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
                                 {{ product.stock }} unidades
                             </span>
                         </td>
