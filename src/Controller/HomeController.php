@@ -19,6 +19,14 @@ final class HomeController extends AbstractController
     #[Route('/home', name: 'app_home')]
     public function index(): Response
     {
+        // Redirigir a login si el usuario no está autenticado
+        if (!$this->getUser()) {
+            // Mostrar mensaje de error si intenta acceder sin autenticarse
+            $this->addFlash('error', 'Acceso denegado. Por favor, inicia sesión.');
+
+            return $this->redirectToRoute('app_login');
+        }
+
         return $this->render('home/index.html.twig', [
             'page_title' => 'Dashboard',
             'template_path' => null
