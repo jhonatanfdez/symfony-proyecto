@@ -1,3 +1,10 @@
 <?php
-// Archivo retirado: controlador de pruebas eliminado.
-// Mantener vacío para evitar rutas o clases autoload.
+
+namespace App\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+// Controlador de pruebas retirado: no expone rutas ni acciones.
+class TestController extends AbstractController
+{
+}
