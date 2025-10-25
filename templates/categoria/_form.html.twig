@@ -1,4 +1,9 @@
-{{ form_start(form) }}
+{#
+    Deshabilitamos Turbo para este formulario para asegurar un reload completo
+    tras el POST + redirect y que los mensajes flash se muestren sin interferencias.
+    Si prefieres mantener Turbo, podemos montar Turbo Streams para flashes.
+#}
+{{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
     {{ form_widget(form) }}
     <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
 {{ form_end(form) }}
