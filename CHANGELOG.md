@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.6.0] - 2025-10-25
+
+### Added
+- Página de diagnóstico `/test-icons` y controlador asociado para verificar renderizado de íconos y herramientas de card.
+
+### Changed
+- Herramientas de card (colapsar/cerrar):
+  - Iconos siempre visibles y con mejor área de clic y estados hover.
+  - Cambio a CDN de Font Awesome 6.4.0 por mayor estabilidad.
+  - Respaldo con símbolos Unicode (− / × vía `::before`) para funcionar incluso si FA no carga.
+  - Estilos finales minimalistas y consistentes.
+- Estética AdminLTE:
+  - Fondo general y del contenido a gris suave `#f4f6f9` para resaltar cards.
+  - Cards blancas con sombra doble sutil que las hace “flotar”.
+
+### Notes
+- La ruta `/test-icons` es solo para dev/QA; puede eliminarse más adelante.
+
 ## [v1.5.3] - 2025-10-25
 
 ### Changed
@@ -183,6 +201,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 
 [v1.5.3]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.3
+[v1.6.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.0
 [v1.5.2]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.2
 [v1.5.1]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.1
 [v1.4.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.4.0
