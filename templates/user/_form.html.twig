@@ -1,4 +1,5 @@
-{{ form_start(form) }}
+{# Forzar navegación completa al enviar para que se muestren los flashes tras redirect #}
+{{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
     {{ form_widget(form) }}
     <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
 {{ form_end(form) }}

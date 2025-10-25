@@ -79,7 +79,13 @@
     - Genera automáticamente: method="post", action, CSRF token
     - novalidate: Desactiva validaciones HTML5 para usar las de Symfony
 #}
-{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+{#
+    Deshabilitamos Turbo Drive para este formulario.
+    Motivo: asegurar que tras POST + redirect el navegador haga visita completa
+    y se rendericen los mensajes flash correctamente.
+    Si se prefiere mantener Turbo, podemos implementar Turbo Streams para flashes.
+#}
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'data-turbo': 'false'}}) }}
 
     {# ===== FILA 1: SKU + Nombre ===== #}
     <div class="row">
