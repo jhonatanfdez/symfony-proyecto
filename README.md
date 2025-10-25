@@ -4,7 +4,7 @@
 
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.6.0 — UI AdminLTE-like (fondo gris y cards flotantes), herramientas de card robustas (colapsar/cerrar con fallback Unicode), cambio a Font Awesome 6.4.0 y página de diagnóstico `/test-icons`.
+Estado actual: v1.6.0 — UI AdminLTE-like (fondo gris y cards flotantes), herramientas de card robustas (colapsar/cerrar con fallback Unicode) y cambio a Font Awesome 6.4.0.
 
 • Changelog: ver [v1.6.0 en CHANGELOG.md](CHANGELOG.md#v160---2025-10-25) · Tag: [v1.6.0](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.6.0)
 
@@ -13,7 +13,7 @@ Estado actual: v1.6.0 — UI AdminLTE-like (fondo gris y cards flotantes), herra
 - Botones de card (minimizar/cerrar) siempre visibles, con mejor área de clic y animación hover.
 - Fallback confiable con símbolos Unicode (− / ×) si Font Awesome no carga.
 - Actualización a CDN de Font Awesome 6.4.0 para mayor estabilidad.
-- Página de diagnóstico `/test-icons` (solo dev/QA) para verificar íconos y comportamiento de las cards.
+
 
 ## Objetivo del proyecto
 
