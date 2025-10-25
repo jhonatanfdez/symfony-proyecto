@@ -136,6 +136,7 @@ class ProductType extends AbstractType
                     'min' => 0,
                     'placeholder' => '0',
                 ],
+                'empty_data' => 0,
                 'help' => 'Cantidad disponible en inventario',
                 'invalid_message' => 'El stock debe ser un número entero válido',
             ])
