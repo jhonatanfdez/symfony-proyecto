@@ -65,22 +65,83 @@ final class ProductController extends AbstractController
         // Setear automáticamente el usuario que crea el producto
         $product->setCreateBy($this->getUser());
 
-
+        // Formulario principal del producto
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
+        // Formulario de imágenes para renderizar (no procesar)
+        $uploadForm = $this->createForm(\App\Form\ProductImageType::class);
+
         if ($form->isSubmitted() && $form->isValid()) {
+            // Primero guardamos el producto para obtener el ID
             $entityManager->persist($product);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Producto creado exitosamente.');
+            // Procesar imágenes directamente del request (campo product_image[files])
+            $uploadedFiles = $request->files->get('product_image');
+            $files = [];
+            if ($uploadedFiles && isset($uploadedFiles['files'])) {
+                $files = is_array($uploadedFiles['files']) ? $uploadedFiles['files'] : [$uploadedFiles['files']];
+            }
 
-            return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
+            $saved = 0;
+            if (count($files) > 0) {
+                $publicDir = (string) ($this->getParameter('kernel.project_dir') . '/public');
+                $relativeDir = 'uploads/products';
+                $absoluteDir = $publicDir . '/' . $relativeDir;
+                if (!is_dir($absoluteDir)) {
+                    @mkdir($absoluteDir, 0775, true);
+                }
+
+                $maxPosition = -1;
+                foreach ($files as $file) {
+                    // Validar que sea un objeto UploadedFile válido
+                    if (!$file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile || !$file->isValid()) {
+                        continue;
+                    }
+
+                    $originalName = $file->getClientOriginalName();
+                    $ext = $file->guessExtension() ?: $file->getClientOriginalExtension() ?: 'bin';
+                    $uniqueName = sprintf('producto-%d-%s.%s', $product->getId(), bin2hex(random_bytes(6)), $ext);
+
+                    try {
+                        $file->move($absoluteDir, $uniqueName);
+
+                        $image = new \App\Entity\ProductImage();
+                        $image->setProduct($product);
+                        $image->setImageName($originalName);
+                        $image->setImagePath($relativeDir . '/' . $uniqueName);
+                        $image->setCreatedAt(new \DateTimeImmutable());
+                        $image->setPosition(++$maxPosition);
+
+                        $entityManager->persist($image);
+                        $saved++;
+                    } catch (\Exception $e) {
+                        // Continuar con las demás imágenes si falla una
+                        continue;
+                    }
+                }
+
+                if ($saved > 0) {
+                    $entityManager->flush();
+                }
+            }
+
+            // Mensaje de éxito
+            if ($saved > 0) {
+                $this->addFlash('success', sprintf('Producto creado con %d imagen(es).', $saved));
+            } else {
+                $this->addFlash('success', 'Producto creado exitosamente.');
+            }
+
+            // Redirigir al show del producto recién creado
+            return $this->redirectToRoute('app_product_show', ['id' => $product->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('product/new.html.twig', [
             'product' => $product,
             'form' => $form,
+            'uploadForm' => $uploadForm->createView(),
         ]);
     }
 
