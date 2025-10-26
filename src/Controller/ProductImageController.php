@@ -146,4 +146,49 @@ final class ProductImageController extends AbstractController
         $this->addFlash('success', 'Imagen eliminada correctamente.');
         return $this->redirectToRoute('app_product_edit', ['id' => $productId]);
     }
+
+    /**
+     * Elimina TODAS las imágenes de un producto (registro BD + archivos físicos).
+     */
+    #[Route('/{id}/images/delete-all', name: 'app_product_delete_all_images', methods: ['POST'])]
+    public function deleteAllImages(Request $request, Product $product, EntityManagerInterface $em): Response
+    {
+        if ($redirect = $this->guard->maybeRedirect($request, $this->getUser())) {
+            return $redirect;
+        }
+
+        // Validación CSRF específica para eliminar todas las imágenes de este producto
+        $token = (string) $request->getPayload()->get('_token');
+        if (!$this->isCsrfTokenValid('delete_all_images' . $product->getId(), $token)) {
+            $this->addFlash('error', 'Token CSRF inválido. Por favor, recarga la página e inténtalo de nuevo.');
+            return $this->redirectToRoute('app_product_edit', ['id' => $product->getId()]);
+        }
+
+        $images = $product->getProductImages();
+        $count = count($images);
+
+        if ($count === 0) {
+            $this->addFlash('info', 'Este producto no tiene imágenes para eliminar.');
+            return $this->redirectToRoute('app_product_edit', ['id' => $product->getId()]);
+        }
+
+        $publicDir = (string) ($this->getParameter('kernel.project_dir') . '/public');
+
+        // Recorrer cada imagen y eliminarla
+        foreach ($images as $image) {
+            // Eliminar archivo físico
+            $absoluteFile = $publicDir . '/' . ltrim((string) $image->getImagePath(), '/');
+            if (is_file($absoluteFile)) {
+                @unlink($absoluteFile);
+            }
+
+            // Eliminar registro en BD
+            $em->remove($image);
+        }
+
+        $em->flush();
+
+        $this->addFlash('success', sprintf('Se eliminaron %d imagen(es) correctamente.', $count));
+        return $this->redirectToRoute('app_product_edit', ['id' => $product->getId()]);
+    }
 }

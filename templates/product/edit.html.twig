@@ -210,13 +210,15 @@
                     - path('app_product_upload_images', { id: product.id })
                     - Ruta: /admin/product/{id}/images donde {id} = ID del producto
                     - Ejemplo: /admin/product/5/images si product.id = 5
+                    - ID js-upload-form: para validación de archivos requeridos antes de enviar
                 #}
                 {{ form_start(uploadForm, {
                     action: path('app_product_upload_images', { id: product.id }),
                     method: 'POST',
                     attr: {
                         enctype: 'multipart/form-data',
-                        'data-turbo': 'false'
+                        'data-turbo': 'false',
+                        id: 'js-upload-form'
                     }
                 }) }}
                     {# Errores del formulario (token CSRF inválido, Count, etc.) #}
@@ -249,7 +251,7 @@
     {# BLOQUE 2: Imágenes actuales (100% ancho), debajo del anterior #}
     <div class="mt-4">
         <div class="card">
-            <div class="card-header bg-secondary text-white">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
                 {#
                     product.productImages es la colección OneToMany
                     Viene del método getProductImages() de la entidad Product
@@ -259,6 +261,21 @@
                     <i class="fas fa-images"></i>
                     Imágenes actuales ({{ product.productImages|length }})
                 </h5>
+
+                {# Botón eliminar todas (solo si hay imágenes) #}
+                {% if product.productImages|length > 0 %}
+                    <form method="post"
+                          action="{{ path('app_product_delete_all_images', {id: product.id}) }}"
+                          class="js-delete-form"
+                          data-swal-title="¿Eliminar TODAS las imágenes?"
+                          data-swal-text="Se eliminarán {{ product.productImages|length }} imagen(es) permanentemente. Esta acción no se puede deshacer."
+                          style="margin: 0;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_all_images' ~ product.id) }}">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i> Eliminar todas
+                        </button>
+                    </form>
+                {% endif %}
             </div>
             <div class="card-body">
                 {# Condicional: ¿tiene imágenes? #}
@@ -355,4 +372,30 @@
         content: cardBody,
         color: 'light'
     } %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Validación del formulario de subida: requiere al menos un archivo seleccionado
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadForm = document.getElementById('js-upload-form');
+            if (uploadForm) {
+                uploadForm.addEventListener('submit', function(e) {
+                    const fileInput = uploadForm.querySelector('input[type="file"]');
+                    if (fileInput && fileInput.files.length === 0) {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'No hay imágenes seleccionadas',
+                            text: 'Por favor, selecciona al menos una imagen antes de subir.',
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#3085d6'
+                        });
+                        return false;
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}
