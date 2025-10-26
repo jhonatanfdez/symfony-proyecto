@@ -191,6 +191,21 @@
             </div>
             <div class="card-body">
                 {#
+                    Mostrar mensajes flash locales relacionados a la subida de imágenes.
+                    Esto asegura que el usuario vea de inmediato los errores específicos
+                    (ej: "No puedes subir más de 10 imágenes", "Token CSRF inválido",
+                    "Solo se permiten JPG, PNG o WEBP", etc.).
+                #}
+                {% set flashTypes = ['error','warning','info','success'] %}
+                {% for type in flashTypes %}
+                    {% for msg in app.flashes(type) %}
+                        <div class="alert alert-{{ type == 'error' ? 'danger' : (type == 'warning' ? 'warning' : (type == 'info' ? 'info' : 'success')) }}" role="alert">
+                            {{ msg }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                {#
                     form_start con action personalizada:
                     - path('app_product_upload_images', { id: product.id })
                     - Ruta: /admin/product/{id}/images donde {id} = ID del producto
@@ -204,6 +219,12 @@
                         'data-turbo': 'false'
                     }
                 }) }}
+                    {# Errores del formulario (token CSRF inválido, Count, etc.) #}
+                    {% if uploadForm.vars.errors|length > 0 %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form_errors(uploadForm) }}
+                        </div>
+                    {% endif %}
                     {#
                         form_row renderiza el campo 'files' del ProductImageType
                         - Input type="file" con multiple="multiple"
@@ -211,6 +232,12 @@
                         - Validaciones en servidor: Count(max 10), Image(5MB, JPEG/PNG/WEBP)
                     #}
                     {{ form_row(uploadForm.files) }}
+                    {# Errores específicos del campo files (tipo/tamaño por imagen) #}
+                    {% if uploadForm.files.vars.errors|length > 0 %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form_errors(uploadForm.files) }}
+                        </div>
+                    {% endif %}
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-cloud-upload-alt"></i> Subir imágenes
                     </button>
