@@ -267,6 +267,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Autenticación base (login/logout) y CRUD de Usuarios.
 
 
+[v1.9.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.9.0
 [v1.5.3]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.3
 [v1.8.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.8.0
 [v1.7.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.7.0
