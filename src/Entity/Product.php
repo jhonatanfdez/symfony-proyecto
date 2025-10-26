@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -177,6 +179,12 @@ class Product
     private ?User $createBy = null;
 
     /**
+     * @var Collection<int, ProductImage>
+     */
+    #[ORM\OneToMany(targetEntity: ProductImage::class, mappedBy: 'product')]
+    private Collection $productImages;
+
+    /**
      * Constructor: establece valores por defecto al crear un producto nuevo
      * AJUSTE MANUAL: añadido para inicializar campos automáticamente
      * - createdAt: fecha/hora actual
@@ -189,6 +197,7 @@ class Product
         $this->createdAt = new \DateTimeImmutable();
         $this->activo = true;
         $this->stock = 0;
+        $this->productImages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -353,6 +362,36 @@ class Product
     public function setCreateBy(?User $createBy): static
     {
         $this->createBy = $createBy;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProductImage>
+     */
+    public function getProductImages(): Collection
+    {
+        return $this->productImages;
+    }
+
+    public function addProductImage(ProductImage $productImage): static
+    {
+        if (!$this->productImages->contains($productImage)) {
+            $this->productImages->add($productImage);
+            $productImage->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductImage(ProductImage $productImage): static
+    {
+        if ($this->productImages->removeElement($productImage)) {
+            // set the owning side to null (unless already changed)
+            if ($productImage->getProduct() === $this) {
+                $productImage->setProduct(null);
+            }
+        }
 
         return $this;
     }
