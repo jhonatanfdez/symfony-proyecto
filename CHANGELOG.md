@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.9.0] - 2025-10-25
+
+### Added
+
+- Productos: entidad `ProductImage` para gestionar múltiples imágenes por producto.
+- Relación OneToMany en `Product` → `ProductImage` (colección de imágenes).
+- Migración: tabla `product_image` con FK a `product` y campos `imageName`, `imagePath`, `position`, `createdAt`.
+- Directorio de almacenamiento: `public/uploads/products/` para guardar archivos de imágenes.
+- Formulario `ProductImageType` para carga múltiple de imágenes:
+  - Validación de máximo 10 imágenes por producto.
+  - Validación de tamaño máximo: 5MB por imagen.
+  - Formatos permitidos: JPEG, PNG, WEBP.
+  - Documentación exhaustiva en español sobre arquitectura y seguridad.
+
+### Technical
+
+- Configuración `.gitignore` actualizada para excluir archivos subidos (mantiene `.gitkeep`).
+- Validaciones server-side robustas con `Assert\Count` y `Assert\Image`.
+- Campo `FileType` con `multiple=true` y `mapped=false` para procesamiento manual en controlador.
+- Preparación de infraestructura para carga, visualización en carousel y eliminación individual de imágenes.
+
 ## [v1.8.0] - 2025-10-25
 
 ### Added
