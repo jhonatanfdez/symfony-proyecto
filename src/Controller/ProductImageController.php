@@ -82,11 +82,30 @@ final class ProductImageController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', sprintf('Se subieron %d imagen(es) correctamente.', $count));
-            return $this->redirectToRoute('app_product_show', ['id' => $product->getId()]);
+            return $this->redirectToRoute('app_product_edit', ['id' => $product->getId()]);
         }
 
-        $this->addFlash('error', 'El formulario no es válido o no se envió correctamente.');
-        return $this->redirectToRoute('app_product_show', ['id' => $product->getId()]);
+        // Si el formulario es inválido, recogemos y mostramos errores específicos.
+        // Esto incluye mensajes de:
+        // - Límite de cantidad (máx 10 imágenes)
+        // - Tipo de archivo no permitido (solo JPG/PNG/WEBP)
+        // - Tamaño excedido por imagen
+        // - Token CSRF inválido (si aplica)
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $shown = [];
+            foreach ($form->getErrors(true, true) as $error) {
+                $message = trim((string) $error->getMessage());
+                if ($message === '') { continue; }
+                // Evitar duplicados exactos
+                if (in_array($message, $shown, true)) { continue; }
+                $shown[] = $message;
+                $this->addFlash('error', $message);
+            }
+        } else {
+            // Formulario no enviado correctamente (edge case)
+            $this->addFlash('error', 'No se pudo procesar la solicitud de subida. Intenta nuevamente.');
+        }
+        return $this->redirectToRoute('app_product_edit', ['id' => $product->getId()]);
     }
 
     // Elimina una imagen individual (registro + archivo físico)
@@ -100,7 +119,7 @@ final class ProductImageController extends AbstractController
         $token = $request->getPayload()->getString('_token');
         if (!$this->isCsrfTokenValid('delete_image' . $image->getId(), $token)) {
             $this->addFlash('error', 'Token CSRF inválido.');
-            return $this->redirectToRoute('app_product_show', ['id' => $image->getProduct()->getId()]);
+            return $this->redirectToRoute('app_product_edit', ['id' => $image->getProduct()->getId()]);
         }
 
         $publicPath = $this->getParameter('kernel.project_dir') . '/public/';
@@ -116,6 +135,6 @@ final class ProductImageController extends AbstractController
         }
 
         $this->addFlash('success', 'Imagen eliminada exitosamente.');
-        return $this->redirectToRoute('app_product_show', ['id' => $productId]);
+        return $this->redirectToRoute('app_product_edit', ['id' => $productId]);
     }
 }

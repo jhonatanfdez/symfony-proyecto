@@ -104,6 +104,7 @@ final class ProductController extends AbstractController
             return $redirect;
         }
 
+        // Formulario principal de edición del producto
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
@@ -115,9 +116,15 @@ final class ProductController extends AbstractController
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        // Formulario adicional para gestión de imágenes del producto
+        // Este formulario permite subir múltiples imágenes (máx 10, 5MB c/u, JPEG/PNG/WEBP)
+        // Se procesa en ProductImageController::uploadImages()
+        $uploadForm = $this->createForm(\App\Form\ProductImageType::class);
+
         return $this->render('product/edit.html.twig', [
             'product' => $product,
             'form' => $form,
+            'uploadForm' => $uploadForm->createView(), // Vista del formulario de subida de imágenes
         ]);
     }
 

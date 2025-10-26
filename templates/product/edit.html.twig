@@ -147,6 +147,180 @@
         #}
         {{ include('product/_delete_form.html.twig') }}
     </div>
+
+    {#
+        ===== SECCIÓN DE GESTIÓN DE IMÁGENES =====
+
+        Esta sección permite:
+        1. Subir nuevas imágenes al producto (columna izquierda)
+        2. Ver y eliminar imágenes existentes (columna derecha)
+
+        ARQUITECTURA:
+        - Dos cards en columnas (col-md-6 cada una)
+        - Formulario de subida apunta a ProductImageController::uploadImages()
+        - Cada imagen tiene botón de eliminar que apunta a ProductImageController::deleteImage()
+
+        FLUJO DE SUBIDA:
+        1. Usuario selecciona hasta 10 imágenes (HTML5 multiple)
+        2. Validaciones: máx 10, 5MB c/u, JPEG/PNG/WEBP
+        3. POST a /admin/product/{id}/images (ID del producto)
+        4. ProductImageController procesa archivos, genera nombres únicos, guarda en uploads/products/
+        5. Crea entidades ProductImage asociadas al producto
+        6. Redirecciona de vuelta al edit con flash de éxito
+
+        FLUJO DE ELIMINACIÓN:
+        1. Usuario hace clic en botón "Eliminar" de una imagen
+        2. SweetAlert2 muestra confirmación (gracias a clase js-delete-form)
+        3. Si confirma: POST a /admin/product/image/{id}/delete (ID de la imagen)
+        4. ProductImageController elimina registro DB + archivo físico
+        5. Redirecciona de vuelta al edit con flash de éxito
+    #}
+    {#
+        DISEÑO ACTUALIZADO (100% DE ANCHO, EN PILA):
+        - Se reemplazan las dos columnas (50/50) por dos bloques apilados al 100% de ancho.
+        - PRIMERO: Card de "Subir nuevas imágenes" (full width)
+        - SEGUNDO: Card de "Imágenes actuales" (full width), debajo del anterior
+        - La grilla interna de miniaturas se mantiene como está (2 por fila con col-6)
+    #}
+
+    {# BLOQUE 1: Subir nuevas imágenes (100% ancho) #}
+    <div class="mt-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-upload"></i> Subir nuevas imágenes</h5>
+            </div>
+            <div class="card-body">
+                {#
+                    form_start con action personalizada:
+                    - path('app_product_upload_images', { id: product.id })
+                    - Ruta: /admin/product/{id}/images donde {id} = ID del producto
+                    - Ejemplo: /admin/product/5/images si product.id = 5
+                #}
+                {{ form_start(uploadForm, {
+                    action: path('app_product_upload_images', { id: product.id }),
+                    method: 'POST',
+                    attr: {
+                        enctype: 'multipart/form-data',
+                        'data-turbo': 'false'
+                    }
+                }) }}
+                    {#
+                        form_row renderiza el campo 'files' del ProductImageType
+                        - Input type="file" con multiple="multiple"
+                        - Accept="image/*" para filtrar en el explorador
+                        - Validaciones en servidor: Count(max 10), Image(5MB, JPEG/PNG/WEBP)
+                    #}
+                    {{ form_row(uploadForm.files) }}
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-cloud-upload-alt"></i> Subir imágenes
+                    </button>
+                {{ form_end(uploadForm) }}
+            </div>
+        </div>
+    </div>
+
+    {# BLOQUE 2: Imágenes actuales (100% ancho), debajo del anterior #}
+    <div class="mt-4">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                {#
+                    product.productImages es la colección OneToMany
+                    Viene del método getProductImages() de la entidad Product
+                    Filtro |length cuenta cuántas imágenes tiene
+                #}
+                <h5 class="mb-0">
+                    <i class="fas fa-images"></i>
+                    Imágenes actuales ({{ product.productImages|length }})
+                </h5>
+            </div>
+            <div class="card-body">
+                {# Condicional: ¿tiene imágenes? #}
+                {% if product.productImages|length > 0 %}
+                    <div class="row">
+                        {#
+                            Iterar sobre cada ProductImage del producto
+                            Cada 'image' es un objeto ProductImage con:
+                            - id: clave primaria de product_image
+                            - imageName: nombre original del archivo
+                            - imagePath: ruta relativa desde public/ (ej: uploads/products/producto-5-123456.jpg)
+                            - position: orden de visualización
+                            - createdAt: timestamp de carga
+                        #}
+                        {% for image in product.productImages %}
+                            <div class="col-4 mb-3">
+                                <div class="card">
+                                    {#
+                                        asset() convierte ruta relativa a URL completa
+                                        Ejemplo: asset('uploads/products/producto-5-123456.jpg')
+                                        → http://localhost/uploads/products/producto-5-123456.jpg
+
+                                        style="height: 150px; object-fit: cover"
+                                        - Fija altura para uniformidad
+                                        - object-fit: cover recorta/ajusta para llenar el espacio sin distorsión
+                                    #}
+                                    <img src="{{ asset(image.imagePath) }}"
+                                         class="card-img-top"
+                                         alt="{{ image.imageName }}"
+                                         style="height: 150px; object-fit: cover;">
+                                    <div class="card-body text-center p-2">
+                                        {# Muestra nombre original del archivo en texto pequeño #}
+                                        <small class="d-block text-muted mb-2">{{ image.imageName }}</small>
+
+                                        {#
+                                            FORMULARIO DE ELIMINACIÓN CON SWEETALERT2
+
+                                            CLASE js-delete-form:
+                                            - Activa listener JavaScript global (en home/base.html.twig)
+                                            - Intercepta submit y muestra modal SweetAlert2
+                                            - Solo envía si usuario confirma
+
+                                            DATA ATTRIBUTES:
+                                            - data-swal-title: título del modal
+                                            - data-swal-text: texto descriptivo del modal
+                                            - data-swal-confirm: texto del botón de confirmar (opcional)
+                                            - data-swal-cancel: texto del botón de cancelar (opcional)
+
+                                            RUTA DE ELIMINACIÓN:
+                                            - path('app_product_image_delete', {id: image.id})
+                                            - Ruta: /admin/product/image/{id}/delete donde {id} = ID de la imagen
+                                            - Ejemplo: /admin/product/image/23/delete si image.id = 23
+                                            - IMPORTANTE: NO es el ID del producto, es el ID de ProductImage
+
+                                            TOKEN CSRF:
+                                            - csrf_token('delete_image' ~ image.id)
+                                            - Genera token único por imagen
+                                            - Ejemplo: delete_image23 para la imagen con ID 23
+                                            - Validado en ProductImageController::deleteImage()
+                                            - Previene ataques CSRF (Cross-Site Request Forgery)
+                                        #}
+                                        <form method="post"
+                                              action="{{ path('app_product_image_delete', {id: image.id}) }}"
+                                              class="js-delete-form"
+                                              data-swal-title="¿Eliminar imagen?"
+                                              data-swal-text="Esta acción no se puede deshacer. La imagen se eliminará permanentemente.">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_image' ~ image.id) }}">
+                                            <button type="submit" class="btn btn-danger btn-sm w-100">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {#
+                        Estado vacío: el producto no tiene imágenes
+                        Muestra mensaje informativo con icono
+                    #}
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle"></i>
+                        Este producto no tiene imágenes. Usa el formulario superior para subir algunas.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
     {% endset %}
 
     {% include 'partials/_card.html.twig' with {
