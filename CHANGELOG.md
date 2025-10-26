@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.9.1] - 2025-10-25
+
+### Added
+
+- Controlador `ProductImageController`: endpoints base para subir múltiples imágenes a un producto y eliminar una imagen individual.
+- Plantilla generada por maker para `product_image` (no utilizada en producción, se mantendrá para referencia temporal).
+
+### Technical
+
+- Configuración: parámetro `uploads_products_dir` en `services.yaml` para definir el directorio absoluto de subidas (`public/uploads/products`).
+- README y CHANGELOG actualizados a v1.9.1 con próximos pasos claros (integración de formulario en la vista y carrusel en show del producto).
+
 ## [v1.9.0] - 2025-10-25
 
 ### Added
@@ -268,6 +280,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 
 [v1.9.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.9.0
+[v1.9.1]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.9.1
 [v1.5.3]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.3
 [v1.8.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.8.0
 [v1.7.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.7.0

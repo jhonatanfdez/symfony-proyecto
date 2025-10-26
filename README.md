@@ -10,11 +10,13 @@
 
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.9.0 — Infraestructura de imágenes múltiples para productos (entidad ProductImage, relaciones OneToMany, formulario de carga con validaciones robustas).
+Estado actual: v1.9.1 — Controlador de imágenes creado y configuración de subidas; infraestructura de imágenes múltiples lista (entidad ProductImage, relación OneToMany, formulario con validaciones).
 
-• Changelog: ver [v1.9.0 en CHANGELOG.md](CHANGELOG.md#v190---2025-10-25) · Tag: [v1.9.0](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.9.0)
+• Changelog: ver [v1.9.1 en CHANGELOG.md](CHANGELOG.md#v191---2025-10-25) · Tag: [v1.9.1](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.9.1)
 
 ## Novedades recientes
+
+- v1.9.1: Controlador ProductImageController (subida y eliminación individual, base) y parámetro `uploads_products_dir` en configuración. README/CHANGELOG actualizados; próximos pasos: integrar formulario en la vista y carrusel en el show del producto.
 
 - v1.9.0: Sistema de imágenes múltiples para productos - entidad ProductImage con relación OneToMany, migración de BD, directorio de uploads, formulario de carga (máx 10 imágenes, 5MB, JPEG/PNG/WEBP), validaciones exhaustivas.
 - v1.8.0: Autenticación renovada (UI moderna y coherente), branding AquaPanel (logo y colores azules), favicon actualizado, redirección de `/home` al login con flash "Acceso denegado", campos `name` y `fecha_cumpleanos` en el registro.
@@ -32,7 +34,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - Ventas y clientes (opcional)
 - Reportes (inventario, rotación, ventas, compras)
 
-## Funcionalidades actuales (v1.9.0)
+## Funcionalidades actuales (v1.9.1)
 
 - Autenticación (login/logout) con UI moderna y branding AquaPanel
   - Redirección automática desde `/home` al login si no está autenticado (con flash "Acceso denegado")
@@ -86,7 +88,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - ~~Productos (CRUD) con SKU, precio, costo, estado~~ ✅ Completado en v1.4.0
 - ~~Imágenes de productos (infraestructura base)~~ ✅ Completado en v1.9.0
 - **En desarrollo**: Imágenes de productos - funcionalidad completa
-  - Controlador de carga (procesamiento de archivos, nombres únicos, persistencia)
+  - Controlador base creado (rutas de subir y eliminar); pendiente integrar en la vista
   - Vista con carousel Bootstrap 5
   - Eliminación individual de imágenes
   - Protección de seguridad (.htaccess en uploads)
