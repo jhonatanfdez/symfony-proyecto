@@ -14,64 +14,130 @@
 
 {% block content %}
     {% set cardBody %}
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <th width="25%">SKU</th>
-                    <td>{{ product.sku }}</td>
-                </tr>
-                <tr>
-                    <th>Nombre</th>
-                    <td>{{ product.nombre }}</td>
-                </tr>
-                <tr>
-                    <th>Categoría</th>
-                    <td>{{ product.categoria.nombre }}</td>
-                </tr>
-                <tr>
-                    <th>Descripción</th>
-                    <td>{{ product.descripcion|nl2br ?: '<em class="text-muted">Sin descripción</em>' }}</td>
-                </tr>
-                <tr>
-                    <th>Precio de Venta</th>
-                    <td><strong class="text-success">${{ product.precio }}</strong></td>
-                </tr>
-                <tr>
-                    <th>Costo</th>
-                    <td class="text-muted">${{ product.costo }}</td>
-                </tr>
-                <tr>
-                    <th>Stock Disponible</th>
-                    <td>
-                        <span class="badge {% if product.stock > 10 %}bg-success{% elseif product.stock > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
-                            {{ product.stock }} unidades
-                        </span>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Estado</th>
-                    <td>
-                        {% if product.activo %}
-                            <span class="badge bg-success">Activo</span>
-                        {% else %}
-                            <span class="badge bg-secondary">Inactivo</span>
+        {# Layout de dos columnas: Carousel (50%) | Información (50%) #}
+        <div class="row">
+            {# COLUMNA IZQUIERDA: Carousel de imágenes (solo si hay imágenes) #}
+            {% if product.productImages|length > 0 %}
+                <div class="col-md-6 mb-4">
+                    <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                        {# Indicadores (puntitos) #}
+                        <div class="carousel-indicators">
+                            {% for image in product.productImages %}
+                                <button type="button"
+                                        data-bs-target="#productCarousel"
+                                        data-bs-slide-to="{{ loop.index0 }}"
+                                        {% if loop.first %}class="active" aria-current="true"{% endif %}
+                                        aria-label="Imagen {{ loop.index }}"></button>
+                            {% endfor %}
+                        </div>
+
+                        {# Items del carousel #}
+                        <div class="carousel-inner">
+                            {% for image in product.productImages %}
+                                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                    <img src="{{ asset(image.imagePath) }}"
+                                         class="d-block w-100"
+                                         alt="{{ image.imageName }}"
+                                         style="height: 400px; object-fit: contain; background-color: #f8f9fa;">
+                                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
+                                        <p class="mb-0 small">{{ image.imageName }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {# Controles anterior/siguiente #}
+                        {% if product.productImages|length > 1 %}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Anterior</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Siguiente</span>
+                            </button>
                         {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Creado por</th>
-                    <td>{{ product.createBy.name ?: product.createBy.email }}</td>
-                </tr>
-                <tr>
-                    <th>Fecha de Creación</th>
-                    <td>{{ product.createdAt ? product.createdAt|date('d/m/Y H:i') : '' }}</td>
-                </tr>
-                <tr>
-                    <th>Última Actualización</th>
-                    <td>{{ product.updatedAt ? product.updatedAt|date('d/m/Y H:i') : '<em class="text-muted">Nunca</em>' }}</td>
-                </tr>
-            </tbody>
-        </table>
+                    </div>
+
+                    {# Contador de imágenes #}
+                    <div class="text-center mt-2 text-muted small">
+                        <i class="fas fa-images"></i> {{ product.productImages|length }} imagen(es)
+                    </div>
+                </div>
+
+                {# COLUMNA DERECHA: Información del producto #}
+                <div class="col-md-6">
+            {% else %}
+                {# Si no hay imágenes, la información ocupa todo el ancho #}
+                <div class="col-12">
+                    <div class="alert alert-info mb-3">
+                        <i class="fas fa-info-circle"></i>
+                        Este producto no tiene imágenes.
+                        <a href="{{ path('app_product_edit', {id: product.id}) }}" class="alert-link">Editar producto</a>
+                        para agregar algunas.
+                    </div>
+            {% endif %}
+
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th width="40%">SKU</th>
+                                <td>{{ product.sku }}</td>
+                            </tr>
+                            <tr>
+                                <th>Nombre</th>
+                                <td>{{ product.nombre }}</td>
+                            </tr>
+                            <tr>
+                                <th>Categoría</th>
+                                <td>{{ product.categoria.nombre }}</td>
+                            </tr>
+                            <tr>
+                                <th>Descripción</th>
+                                <td>{{ product.descripcion|nl2br ?: '<em class="text-muted">Sin descripción</em>' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Precio de Venta</th>
+                                <td><strong class="text-success">${{ product.precio }}</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Costo</th>
+                                <td class="text-muted">${{ product.costo }}</td>
+                            </tr>
+                            <tr>
+                                <th>Stock Disponible</th>
+                                <td>
+                                    <span class="badge {% if product.stock > 10 %}bg-success{% elseif product.stock > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                                        {{ product.stock }} unidades
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Estado</th>
+                                <td>
+                                    {% if product.activo %}
+                                        <span class="badge bg-success">Activo</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Creado por</th>
+                                <td>{{ product.createBy.name ?: product.createBy.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Fecha de Creación</th>
+                                <td>{{ product.createdAt ? product.createdAt|date('d/m/Y H:i') : '' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Última Actualización</th>
+                                <td>{{ product.updatedAt ? product.updatedAt|date('d/m/Y H:i') : '<em class="text-muted">Nunca</em>' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+        </div>
     {% endset %}
 
     {% set cardFooter %}

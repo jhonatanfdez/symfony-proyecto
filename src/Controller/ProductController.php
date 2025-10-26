@@ -198,10 +198,18 @@ final class ProductController extends AbstractController
         }
 
         if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->getPayload()->getString('_token'))) {
+            // Eliminar archivos físicos de las imágenes antes de borrar el producto
+            $publicDir = (string) ($this->getParameter('kernel.project_dir') . '/public');
+            foreach ($product->getProductImages() as $image) {
+                $absoluteFile = $publicDir . '/' . ltrim((string) $image->getImagePath(), '/');
+                if (is_file($absoluteFile)) {
+                    @unlink($absoluteFile);
+                }
+            }
+
+            // Doctrine eliminará automáticamente las entidades ProductImage gracias a cascade/orphanRemoval
             $entityManager->remove($product);
             $entityManager->flush();
-
-
         }
 
         $this->addFlash('success', 'Producto eliminado exitosamente.');
