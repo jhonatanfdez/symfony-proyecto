@@ -10,18 +10,17 @@
 
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.9.1 — Controlador de imágenes creado y configuración de subidas; infraestructura de imágenes múltiples lista (entidad ProductImage, relación OneToMany, formulario con validaciones).
+Estado actual: v1.10.0 — Sistema completo de gestión de imágenes de productos: carousel en show, subida de imágenes al crear/editar, eliminación individual y en lote, corrección de eliminación en cascada.
 
-• Changelog: ver [v1.9.1 en CHANGELOG.md](CHANGELOG.md#v191---2025-10-25) · Tag: [v1.9.1](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.9.1)
+• Changelog: ver [v1.10.0 en CHANGELOG.md](CHANGELOG.md#v1100---2025-10-26) · Tag: [v1.10.0](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.10.0)
 
 ## Novedades recientes
 
-- v1.9.1: Controlador ProductImageController (subida y eliminación individual, base) y parámetro `uploads_products_dir` en configuración. README/CHANGELOG actualizados; próximos pasos: integrar formulario en la vista y carrusel en el show del producto.
-
-- v1.9.0: Sistema de imágenes múltiples para productos - entidad ProductImage con relación OneToMany, migración de BD, directorio de uploads, formulario de carga (máx 10 imágenes, 5MB, JPEG/PNG/WEBP), validaciones exhaustivas.
-- v1.8.0: Autenticación renovada (UI moderna y coherente), branding AquaPanel (logo y colores azules), favicon actualizado, redirección de `/home` al login con flash "Acceso denegado", campos `name` y `fecha_cumpleanos` en el registro.
-- v1.7.0: Buscadores unificados (diseño neutro), productos con descripción en listado, simplificación de filtros a campo+texto y usuarios con estado Activo/Inactivo y filtro por rol.
-- v1.6.1: Eliminada la ruta/plantilla de diagnóstico `/test-icons` y migración de vistas a `partials/_card.html.twig` (categorías, productos, usuarios), breadcrumbs minimalistas.
+- v1.10.0: **Sistema completo de imágenes de productos** 🎉 - Carousel Bootstrap 5 en show (layout 50/50), subida de imágenes al crear producto con redirección automática al show, botón "Eliminar todas", validación con SweetAlert2, mensajes de error específicos, y corrección de eliminación en cascada (ON DELETE CASCADE).
+- v1.9.1: Controlador ProductImageController (subida y eliminación individual, base) y parámetro `uploads_products_dir` en configuración.
+- v1.9.0: Infraestructura de imágenes múltiples - entidad ProductImage con relación OneToMany, migración de BD, directorio de uploads, formulario de carga con validaciones exhaustivas.
+- v1.8.0: Autenticación renovada (UI moderna), branding AquaPanel, campos adicionales en registro.
+- v1.7.0: Buscadores unificados, productos con descripción en listado, usuarios con estado Activo/Inactivo.
 
 ## Objetivo del proyecto
 
@@ -34,7 +33,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - Ventas y clientes (opcional)
 - Reportes (inventario, rotación, ventas, compras)
 
-## Funcionalidades actuales (v1.9.1)
+## Funcionalidades actuales (v1.10.0)
 
 - Autenticación (login/logout) con UI moderna y branding AquaPanel
   - Redirección automática desde `/home` al login si no está autenticado (con flash "Acceso denegado")
@@ -52,17 +51,33 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
   - SKU único, nombre, descripción, precio, costo, stock, estado activo/inactivo
   - Relación con categorías (obligatoria)
   - Auditoría: registro automático del usuario creador
-  - **Sistema de imágenes múltiples** 📸 ⭐ NUEVO
-    - Entidad ProductImage con relación OneToMany
-    - Tabla product_image en base de datos con FK a product
-    - Directorio de almacenamiento: `public/uploads/products/`
-    - Formulario de carga con validaciones:
-      - Máximo 10 imágenes por producto
-      - Tamaño máximo: 5MB por imagen
-      - Formatos permitidos: JPEG, PNG, WEBP
-      - Doble capa de validación (HTML5 + server-side)
-    - Campos: imageName, imagePath, position, createdAt
-    - Infraestructura lista para: carga, visualización en carousel, eliminación individual
+  - **Sistema completo de imágenes múltiples** 📸 ⭐ NUEVO
+    - **Carousel Bootstrap 5 en vista show**: layout 50/50 (carousel izquierda, info derecha)
+      - Indicadores (puntitos), controles prev/next, auto-rotación
+      - Imágenes con object-fit: contain (400px altura, sin distorsión)
+      - Contador de imágenes, caption con nombre de archivo
+      - Si no hay imágenes: alerta informativa y layout adaptativo (100% ancho)
+    - **Subida de imágenes al crear producto**: 
+      - Formulario integrado en `new.html.twig` (hasta 10 imágenes)
+      - Redirección automática al show del producto recién creado
+      - Mensaje flash dinámico según cantidad de imágenes subidas
+    - **Gestión completa en edición**:
+      - Formulario de subida con validación JavaScript (SweetAlert2)
+      - No permite enviar sin seleccionar archivos
+      - Botón "Eliminar todas las imágenes" con confirmación
+      - Endpoint `/admin/product/{id}/images/delete-all` (BD + archivos físicos)
+      - Mensajes de error específicos: límite cantidad, tipo no permitido, tamaño excedido, CSRF inválido
+    - **Eliminación en cascada corregida**:
+      - Cascade: ['persist', 'remove'] y orphanRemoval en relación OneToMany
+      - Migración con ON DELETE CASCADE en FK de product_image
+      - Eliminación física de archivos sincronizada con BD
+      - Permite eliminar productos con imágenes sin errores de integridad referencial
+    - Infraestructura técnica:
+      - Entidad ProductImage con relación OneToMany a Product
+      - Tabla product_image: imageName, imagePath, position, createdAt
+      - Directorio: `public/uploads/products/`
+      - Validaciones: máx 10 imágenes, 5MB cada una, JPEG/PNG/WEBP
+      - ProductImageController con endpoints de subida y eliminación
   - **Validaciones robustas con manejo de errores mejorado** ⭐
     - Doble capa: HTML5 + servidor con @Assert
     - Sistema de errores exhaustivo: muestra todos los errores de validación campo por campo
@@ -86,12 +101,11 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 ## Próximos módulos (Roadmap)
 
 - ~~Productos (CRUD) con SKU, precio, costo, estado~~ ✅ Completado en v1.4.0
-- ~~Imágenes de productos (infraestructura base)~~ ✅ Completado en v1.9.0
-- **En desarrollo**: Imágenes de productos - funcionalidad completa
-  - Controlador base creado (rutas de subir y eliminar); pendiente integrar en la vista
-  - Vista con carousel Bootstrap 5
-  - Eliminación individual de imágenes
-  - Protección de seguridad (.htaccess en uploads)
+- ~~Imágenes de productos - sistema completo~~ ✅ Completado en v1.10.0
+  - ~~Carousel Bootstrap 5 en show~~ ✅
+  - ~~Subida de imágenes al crear/editar~~ ✅
+  - ~~Eliminación individual y en lote~~ ✅
+  - ~~Corrección de eliminación en cascada~~ ✅
 - Inventario: existencias, almacenes, movimientos (entradas/salidas/ajustes)
 - Proveedores y compras (OC, recepción, costos)
 - Ventas y clientes (opcional): pedidos, facturación ligera

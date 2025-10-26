@@ -4,6 +4,43 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.10.0] - 2025-10-26
+
+### Added
+
+- **Sistema completo de gestión de imágenes de productos**:
+  - Carousel Bootstrap 5 en la vista `show` del producto con indicadores, controles prev/next y auto-rotación.
+  - Layout 50/50: carousel a la izquierda (400px altura, object-fit: contain), información del producto a la derecha.
+  - Si no hay imágenes, la información ocupa 100% con alerta informativa.
+  - Contador de imágenes debajo del carousel.
+  
+- **Subida de imágenes al crear producto**:
+  - Formulario integrado en `new.html.twig` para subir hasta 10 imágenes al crear el producto.
+  - Procesamiento directo de archivos del request en `ProductController::new()`.
+  - Al crear producto con imágenes, redirige automáticamente al `show` (en lugar del listado).
+  - Mensaje flash dinámico según cantidad de imágenes subidas.
+
+- **Gestión de imágenes en edición**:
+  - Botón "Eliminar todas las imágenes" en la vista `edit` con confirmación SweetAlert2.
+  - Endpoint `POST /admin/product/{id}/images/delete-all` que elimina todas las imágenes del producto (BD + archivos físicos).
+  - Validación JavaScript en formulario de subida: no permite enviar sin seleccionar archivos (mensaje con SweetAlert2).
+  - Mensajes de error específicos al subir imágenes: límite de cantidad, tipo no permitido, tamaño excedido, CSRF inválido.
+
+### Fixed
+
+- **Eliminación en cascada de productos con imágenes**:
+  - `Product.php`: agregado `cascade: ['persist', 'remove']` y `orphanRemoval: true` en relación OneToMany.
+  - `ProductController::delete()`: elimina archivos físicos antes de borrar el producto.
+  - Migración `Version20251026030000`: altera FK de `product_image` para agregar `ON DELETE CASCADE`.
+  - Resuelto error de integridad referencial al eliminar productos con imágenes asociadas.
+
+### Technical
+
+- Validación client-side con SweetAlert2 (más amigable que alert nativo).
+- Recolección y display de errores específicos de formulario mediante `form->getErrors(true, true)`.
+- Procesamiento manual de archivos en creación de productos para evitar problemas de múltiples formularios.
+- Eliminación física de archivos en servidor sincronizada con eliminación en BD.
+
 ## [v1.9.1] - 2025-10-25
 
 ### Added
@@ -279,6 +316,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Autenticación base (login/logout) y CRUD de Usuarios.
 
 
+[v1.10.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.10.0
 [v1.9.0]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.9.0
 [v1.9.1]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.9.1
 [v1.5.3]: https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.5.3
