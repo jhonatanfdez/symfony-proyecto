@@ -10,7 +10,7 @@
 
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.11.0 — Inicio del Sistema de Inventario: nueva entidad StockMovement con validaciones exhaustivas, enum TipoMovimiento para control de operaciones (ENTRADA/SALIDA/AJUSTE), documentación completa y preparación para implementación.
+Estado actual: v1.11.0 — Sistema de Inventario (Fase 1): Implementación base con nueva entidad StockMovement (validaciones exhaustivas, relaciones con Product/User), enum TipoMovimiento (ENTRADA/SALIDA/AJUSTE), soporte para referencias de documentos (OC, facturas), timestamps automáticos, y base para futuras características (almacenes, valorización).
 
 • Changelog: ver [v1.11.0 en CHANGELOG.md](CHANGELOG.md#v1110---2025-11-07) · Tag: [v1.11.0](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.11.0)
 
@@ -93,7 +93,7 @@ Notas:
 
 ## Novedades recientes
 
-- v1.11.0: **Inicio del Sistema de Inventario** 🎯 - Nueva entidad StockMovement con validaciones exhaustivas, enum TipoMovimiento para control de operaciones (ENTRADA/SALIDA/AJUSTE), documentación completa y preparación para la implementación del servicio y controlador.
+- v1.11.0: **Sistema de Inventario (Fase 1)** 🎯 - Nueva entidad StockMovement con campos completos (cantidad, fecha, notas, referencias), validaciones exhaustivas (@Assert), relaciones con Product/User, enum TipoMovimiento (ENTRADA/SALIDA/AJUSTE) con validación en BD, timestamps automáticos, soporte para documentos relacionados (OC, facturas) y base para futuras características (almacenes, valorización).
 - v1.10.0: **Sistema completo de imágenes de productos** 🎉 - Carousel Bootstrap 5 en show (layout 50/50), subida de imágenes al crear producto con redirección automática al show, botón "Eliminar todas", validación con SweetAlert2, mensajes de error específicos, y corrección de eliminación en cascada (ON DELETE CASCADE).
 - v1.9.1: Controlador ProductImageController (subida y eliminación individual, base) y parámetro `uploads_products_dir` en configuración.
 - v1.9.0: Infraestructura de imágenes múltiples - entidad ProductImage con relación OneToMany, migración de BD, directorio de uploads, formulario de carga con validaciones exhaustivas.
@@ -111,8 +111,26 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - Ventas y clientes (opcional)
 - Reportes (inventario, rotación, ventas, compras)
 
-## Funcionalidades actuales (v1.10.0)
+## Funcionalidades actuales (v1.11.0)
 
+- **Sistema de Inventario (Fase 1)** 🎯 NUEVO
+  - Nueva entidad `StockMovement` para registro de movimientos
+    - Campos: cantidad, fecha, tipo de movimiento, notas, referencias
+    - Relaciones: producto (`ManyToOne`), usuario (`ManyToOne`)
+    - Validaciones exhaustivas con @Assert
+      - Cantidad no puede ser cero
+      - Notas obligatorias para AJUSTE
+      - Referencias opcionales (número de OC, factura, etc.)
+    - Timestamps automáticos (createdAt, updatedAt)
+  - Enum `TipoMovimiento` para control de operaciones
+    - Tipos soportados: ENTRADA, SALIDA, AJUSTE
+    - Validación a nivel de base de datos (CHECK constraint)
+    - Mensajes de error personalizados en español
+  - Infraestructura para extensión futura
+    - Preparado para agregar almacenes
+    - Soporte para documentos relacionados
+    - Base para reportes de valorización
+  
 - Autenticación (login/logout) con UI moderna y branding AquaPanel
   - Redirección automática desde `/home` al login si no está autenticado (con flash "Acceso denegado")
   - Registro con campos: email, contraseña, nombre, fecha de nacimiento
