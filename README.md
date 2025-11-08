@@ -10,9 +10,86 @@
 
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.10.0 — Sistema completo de gestión de imágenes de productos: carousel en show, subida de imágenes al crear/editar, eliminación individual y en lote, corrección de eliminación en cascada.
+Estado actual: v1.11.0 — Inicio del Sistema de Inventario: nueva entidad StockMovement con validaciones exhaustivas, enum TipoMovimiento para control de operaciones (ENTRADA/SALIDA/AJUSTE), documentación completa y preparación para implementación.
 
-• Changelog: ver [v1.10.0 en CHANGELOG.md](CHANGELOG.md#v1100---2025-10-26) · Tag: [v1.10.0](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.10.0)
+• Changelog: ver [v1.11.0 en CHANGELOG.md](CHANGELOG.md#v1110---2025-11-07) · Tag: [v1.11.0](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.11.0)
+
+## Instalación y ejecución
+
+### Requisitos previos
+
+- PHP 8.1 o superior
+- Composer
+- Git
+- MySQL/MariaDB o PostgreSQL
+- Extensiones PHP: pdo_mysql o pdo_pgsql
+- Opcional pero recomendado: Symfony CLI
+
+### Pasos de instalación
+
+1. Clonar el repositorio:
+```bash
+# HTTPS
+git clone https://github.com/jhonatanfdez/symfony-proyecto.git
+# o SSH
+git clone git@github.com:jhonatanfdez/symfony-proyecto.git
+
+cd symfony-proyecto
+```
+
+2. Instalar dependencias:
+```bash
+composer install
+```
+
+3. Configurar variables de entorno:
+```bash
+# Copiar el archivo de ejemplo
+cp .env .env.local
+
+# Editar .env.local y configurar la conexión a BD
+# Ejemplo para MySQL:
+DATABASE_URL="mysql://usuario:contraseña@127.0.0.1:3306/nombre_base_datos?serverVersion=8.0"
+```
+
+4. Crear la base de datos:
+```bash
+# Con Symfony CLI
+symfony console doctrine:database:create
+# o con PHP
+php bin/console doctrine:database:create
+```
+
+5. Ejecutar migraciones:
+```bash
+symfony console doctrine:migrations:migrate
+# o
+php bin/console doctrine:migrations:migrate
+```
+
+6. Crear usuario administrador:
+```bash
+# El comando te pedirá email y contraseña
+symfony console app:create-admin
+# o
+php bin/console app:create-admin
+```
+
+7. Iniciar el servidor:
+```bash
+# Con Symfony CLI (recomendado)
+symfony serve -d
+# o con PHP
+php -S localhost:8000 -t public/
+```
+
+8. Acceder a la aplicación:
+- URL: `https://localhost:8000`
+- Credenciales: las que configuraste en el paso 6
+
+Notas:
+- El primer usuario con rol administrador (`ROLE_ADMIN`) puede asignarse mediante actualización directa en BD o añadiendo lógica temporal/console para promoción de roles.
+- Los formularios de eliminación ya incluyen CSRF y confirmación con SweetAlert2.
 
 ## Novedades recientes
 
@@ -131,83 +208,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
   - Administrativa (solo admin): Usuarios, Categorías, Productos
 - Prefijo `/admin` para rutas con acceso restringido a administradores
 
-## Instalación y ejecución
 
-### Requisitos previos
-
-- PHP 8.1 o superior
-- Composer
-- Git
-- MySQL/MariaDB o PostgreSQL
-- Extensiones PHP: pdo_mysql o pdo_pgsql
-- Opcional pero recomendado: Symfony CLI
-
-### Pasos de instalación
-
-1. Clonar el repositorio:
-```bash
-# HTTPS
-git clone https://github.com/jhonatanfdez/symfony-proyecto.git
-# o SSH
-git clone git@github.com:jhonatanfdez/symfony-proyecto.git
-
-cd symfony-proyecto
-```
-
-2. Instalar dependencias:
-```bash
-composer install
-```
-
-3. Configurar variables de entorno:
-```bash
-# Copiar el archivo de ejemplo
-cp .env .env.local
-
-# Editar .env.local y configurar la conexión a BD
-# Ejemplo para MySQL:
-DATABASE_URL="mysql://usuario:contraseña@127.0.0.1:3306/nombre_base_datos?serverVersion=8.0"
-```
-
-4. Crear la base de datos:
-```bash
-# Con Symfony CLI
-symfony console doctrine:database:create
-# o con PHP
-php bin/console doctrine:database:create
-```
-
-5. Ejecutar migraciones:
-```bash
-symfony console doctrine:migrations:migrate
-# o
-php bin/console doctrine:migrations:migrate
-```
-
-6. Crear usuario administrador:
-```bash
-# El comando te pedirá email y contraseña
-symfony console app:create-admin
-# o
-php bin/console app:create-admin
-```
-
-7. Iniciar el servidor:
-```bash
-# Con Symfony CLI (recomendado)
-symfony serve -d
-# o con PHP
-php -S localhost:8000 -t public/
-```
-
-8. Acceder a la aplicación:
-- URL: `https://localhost:8000`
-- Credenciales: las que configuraste en el paso 6
-
-Notas:
-
-- El primer usuario con rol administrador (`ROLE_ADMIN`) puede asignarse mediante actualización directa en BD o añadiendo lógica temporal/console para promoción de roles.
-- Los formularios de eliminación ya incluyen CSRF y confirmación con SweetAlert2.
 
 ## Uso de SweetAlert2 en formularios de eliminación
 
