@@ -185,6 +185,12 @@ class Product
     private Collection $productImages;
 
     /**
+     * @var Collection<int, StockMovement>
+     */
+    #[ORM\OneToMany(targetEntity: StockMovement::class, mappedBy: 'product')]
+    private Collection $stockMovements;
+
+    /**
      * Constructor: establece valores por defecto al crear un producto nuevo
      * AJUSTE MANUAL: añadido para inicializar campos automáticamente
      * - createdAt: fecha/hora actual
@@ -198,6 +204,7 @@ class Product
         $this->activo = true;
         $this->stock = 0;
         $this->productImages = new ArrayCollection();
+        $this->stockMovements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -390,6 +397,36 @@ class Product
             // set the owning side to null (unless already changed)
             if ($productImage->getProduct() === $this) {
                 $productImage->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, StockMovement>
+     */
+    public function getStockMovements(): Collection
+    {
+        return $this->stockMovements;
+    }
+
+    public function addStockMovement(StockMovement $stockMovement): static
+    {
+        if (!$this->stockMovements->contains($stockMovement)) {
+            $this->stockMovements->add($stockMovement);
+            $stockMovement->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStockMovement(StockMovement $stockMovement): static
+    {
+        if ($this->stockMovements->removeElement($stockMovement)) {
+            // set the owning side to null (unless already changed)
+            if ($stockMovement->getProduct() === $this) {
+                $stockMovement->setProduct(null);
             }
         }
 
