@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\StockMovement;
-use App\Form\StockMovement1Type;
+use App\Form\StockMovementType;
 use App\Repository\StockMovementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +26,7 @@ final class StockMovementController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $stockMovement = new StockMovement();
-        $form = $this->createForm(StockMovement1Type::class, $stockMovement);
+        $form = $this->createForm(StockMovementType::class, $stockMovement);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -53,7 +53,7 @@ final class StockMovementController extends AbstractController
     #[Route('/{id}/edit', name: 'app_stock_movement_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, StockMovement $stockMovement, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(StockMovement1Type::class, $stockMovement);
+        $form = $this->createForm(StockMovementType::class, $stockMovement);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
