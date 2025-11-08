@@ -16,6 +16,7 @@ Estado actual: v1.10.0 — Sistema completo de gestión de imágenes de producto
 
 ## Novedades recientes
 
+- v1.11.0: **Inicio del Sistema de Inventario** 🎯 - Nueva entidad StockMovement con validaciones exhaustivas, enum TipoMovimiento para control de operaciones (ENTRADA/SALIDA/AJUSTE), documentación completa y preparación para la implementación del servicio y controlador.
 - v1.10.0: **Sistema completo de imágenes de productos** 🎉 - Carousel Bootstrap 5 en show (layout 50/50), subida de imágenes al crear producto con redirección automática al show, botón "Eliminar todas", validación con SweetAlert2, mensajes de error específicos, y corrección de eliminación en cascada (ON DELETE CASCADE).
 - v1.9.1: Controlador ProductImageController (subida y eliminación individual, base) y parámetro `uploads_products_dir` en configuración.
 - v1.9.0: Infraestructura de imágenes múltiples - entidad ProductImage con relación OneToMany, migración de BD, directorio de uploads, formulario de carga con validaciones exhaustivas.
@@ -132,18 +133,76 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 
 ## Instalación y ejecución
 
-Requisitos previos:
+### Requisitos previos
 
-- PHP 8.1 o superior, Composer, extensión PDO para tu DB
-- Base de datos (MySQL/MariaDB o PostgreSQL)
-- Opcional: Symfony CLI para un server local sencillo
+- PHP 8.1 o superior
+- Composer
+- Git
+- MySQL/MariaDB o PostgreSQL
+- Extensiones PHP: pdo_mysql o pdo_pgsql
+- Opcional pero recomendado: Symfony CLI
 
-Pasos básicos:
+### Pasos de instalación
 
-1) Clonar el repositorio y instalar dependencias con Composer
-2) Configurar la conexión a BD en `DATABASE_URL` (en `.env.local`)
-3) Crear base de datos y ejecutar migraciones de Doctrine
-4) Levantar el servidor (Symfony CLI o PHP servidor embebido)
+1. Clonar el repositorio:
+```bash
+# HTTPS
+git clone https://github.com/jhonatanfdez/symfony-proyecto.git
+# o SSH
+git clone git@github.com:jhonatanfdez/symfony-proyecto.git
+
+cd symfony-proyecto
+```
+
+2. Instalar dependencias:
+```bash
+composer install
+```
+
+3. Configurar variables de entorno:
+```bash
+# Copiar el archivo de ejemplo
+cp .env .env.local
+
+# Editar .env.local y configurar la conexión a BD
+# Ejemplo para MySQL:
+DATABASE_URL="mysql://usuario:contraseña@127.0.0.1:3306/nombre_base_datos?serverVersion=8.0"
+```
+
+4. Crear la base de datos:
+```bash
+# Con Symfony CLI
+symfony console doctrine:database:create
+# o con PHP
+php bin/console doctrine:database:create
+```
+
+5. Ejecutar migraciones:
+```bash
+symfony console doctrine:migrations:migrate
+# o
+php bin/console doctrine:migrations:migrate
+```
+
+6. Crear usuario administrador:
+```bash
+# El comando te pedirá email y contraseña
+symfony console app:create-admin
+# o
+php bin/console app:create-admin
+```
+
+7. Iniciar el servidor:
+```bash
+# Con Symfony CLI (recomendado)
+symfony serve -d
+# o con PHP
+php -S localhost:8000 -t public/
+```
+
+8. Acceder a la aplicación:
+- URL: `https://localhost:8000`
+- Credenciales: las que configuraste en el paso 6
 
 Notas:
 

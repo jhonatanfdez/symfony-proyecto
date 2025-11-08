@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.11.0] - 2025-11-07
+
+### Added
+- **Sistema de Control de Inventario** 🎯
+  - Nueva entidad `StockMovement` para registro de movimientos
+  - Enum `TipoMovimiento` (ENTRADA, SALIDA, AJUSTE)
+  - Validaciones robustas con mensajes en español
+  - Documentación exhaustiva del sistema
+  - Preparación para implementación del servicio y controlador
+
+### Technical
+- Relaciones bidireccionales con Product y User
+- Constructor con fecha automática
+- Validaciones @Assert completas
+- Enumeración para tipos de movimiento
+
 ## [v1.10.0] - 2025-10-26
 
 ### Added
