@@ -1,11 +1,24 @@
 {% extends 'home/base.html.twig' %}
 
-{% block title %}New StockMovement{% endblock %}
+{% block title %}Nuevo Movimiento de Stock{% endblock %}
 
-{% block body %}
-    <h1>Create new StockMovement</h1>
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Nuevo Movimiento de Stock</h1>
+        <div class="btn-group">
+            <a href="{{ path('app_stock_movement_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver al listado
+            </a>
+        </div>
+    </div>
 
-    {{ include('stock_movement/_form.html.twig') }}
+    {% set cardBody %}
+        {{ include('stock_movement/_form.html.twig') }}
+    {% endset %}
 
-    <a href="{{ path('app_stock_movement_index') }}">back to list</a>
+    {% include 'partials/_card.html.twig' with {
+        title: 'Datos del Movimiento',
+        content: cardBody,
+        color: 'light'
+    } %}
 {% endblock %}

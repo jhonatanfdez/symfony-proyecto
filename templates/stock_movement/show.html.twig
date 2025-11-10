@@ -12,81 +12,79 @@
 
 {% block title %}Detalle del Movimiento{% endblock %}
 
-{% block body %}
-    <div class="container-fluid">
-        {# Encabezado con botones de acción #}
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Detalle del Movimiento</h1>
-            <div class="btn-group">
-                <a href="{{ path('app_stock_movement_index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Volver
-                </a>
-            </div>
-        </div>
-
-        {# Tarjeta con los detalles del movimiento #}
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Información del Movimiento</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    {# Columna izquierda #}
-                    <div class="col-md-6">
-                        <table class="table table-sm">
-                            <tbody>
-                                <tr>
-                                    <th class="w-25">Producto:</th>
-                                    <td>{{ stock_movement.product.nombre }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Tipo:</th>
-                                    <td>
-                                        {% if stock_movement.tipo == 'ENTRADA' %}
-                                            <span class="badge bg-success">Entrada</span>
-                                        {% elseif stock_movement.tipo == 'SALIDA' %}
-                                            <span class="badge bg-danger">Salida</span>
-                                        {% else %}
-                                            <span class="badge bg-warning text-dark">Ajuste</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Cantidad:</th>
-                                    <td>
-                                        {% if stock_movement.tipo == 'ENTRADA' %}
-                                            <span class="text-success">+{{ stock_movement.cantidad }}</span>
-                                        {% elseif stock_movement.tipo == 'SALIDA' %}
-                                            <span class="text-danger">-{{ stock_movement.cantidad }}</span>
-                                        {% else %}
-                                            <span class="text-warning">{{ stock_movement.cantidad }}</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    {# Columna derecha #}
-                    <div class="col-md-6">
-                        <table class="table table-sm">
-                            <tbody>
-                                <tr>
-                                    <th class="w-25">Fecha:</th>
-                                    <td>{{ stock_movement.fecha ? stock_movement.fecha|date('d/m/Y H:i') : '' }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Usuario:</th>
-                                    <td>{{ stock_movement.createBy.name ?: stock_movement.createBy.email }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Descripción:</th>
-                                    <td>{{ stock_movement.descripcion ?: 'Sin descripción' }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+{% block content %}
+    {# Encabezado con botones de acción #}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Detalle del Movimiento</h1>
+        <div class="btn-group">
+            <a href="{{ path('app_stock_movement_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
         </div>
     </div>
+
+    {% set cardBody %}
+        <div class="row">
+            {# Columna izquierda #}
+            <div class="col-md-6">
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <th class="w-25">Producto:</th>
+                            <td>{{ stock_movement.product.nombre }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tipo:</th>
+                            <td>
+                                {% if stock_movement.tipo == 'ENTRADA' %}
+                                    <span class="badge bg-success">Entrada</span>
+                                {% elseif stock_movement.tipo == 'SALIDA' %}
+                                    <span class="badge bg-danger">Salida</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">Ajuste</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Cantidad:</th>
+                            <td>
+                                {% if stock_movement.tipo == 'ENTRADA' %}
+                                    <span class="text-success">+{{ stock_movement.cantidad }}</span>
+                                {% elseif stock_movement.tipo == 'SALIDA' %}
+                                    <span class="text-danger">-{{ stock_movement.cantidad }}</span>
+                                {% else %}
+                                    <span class="text-warning">{{ stock_movement.cantidad }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {# Columna derecha #}
+            <div class="col-md-6">
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <th class="w-25">Fecha:</th>
+                            <td>{{ stock_movement.fecha ? stock_movement.fecha|date('d/m/Y H:i') : '' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Usuario:</th>
+                            <td>{{ stock_movement.createBy.name ?: stock_movement.createBy.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Descripción:</th>
+                            <td>{{ stock_movement.descripcion ?: 'Sin descripción' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endset %}
+
+    {% include 'partials/_card.html.twig' with {
+        title: 'Información del Movimiento',
+        content: cardBody,
+        color: 'light'
+    } %}
 {% endblock %}

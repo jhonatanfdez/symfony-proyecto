@@ -1,13 +1,27 @@
 {% extends 'home/base.html.twig' %}
 
-{% block title %}Edit StockMovement{% endblock %}
+{% block title %}Editar Movimiento de Stock{% endblock %}
 
-{% block body %}
-    <h1>Edit StockMovement</h1>
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Editar Movimiento de Stock</h1>
+        <div class="btn-group">
+            <a href="{{ path('app_stock_movement_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver al listado
+            </a>
+        </div>
+    </div>
 
-    {{ include('stock_movement/_form.html.twig', {'button_label': 'Update'}) }}
+    {% set cardBody %}
+        {{ include('stock_movement/_form.html.twig', {'button_label': 'Actualizar'}) }}
+        <div class="mt-3">
+            {{ include('stock_movement/_delete_form.html.twig') }}
+        </div>
+    {% endset %}
 
-    <a href="{{ path('app_stock_movement_index') }}">back to list</a>
-
-    {{ include('stock_movement/_delete_form.html.twig') }}
+    {% include 'partials/_card.html.twig' with {
+        title: 'Datos del Movimiento',
+        content: cardBody,
+        color: 'light'
+    } %}
 {% endblock %}
