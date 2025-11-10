@@ -4,6 +4,46 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [v1.12.0] - 2025-11-09
+
+### Added
+- **Sistema completo de Movimientos de Stock** 🚀
+  - Integración del `StockMovementService` en `StockMovementController` con manejo automático de fecha y usuario
+  - Inyección de dependencias del servicio para crear movimientos (entradas, salidas, ajustes)
+  - Mensajes flash contextualizados (éxito/error) con manejo de excepciones
+  - Opción `is_edit` en formulario para mostrar campos de solo lectura en modo edición
+  
+- **Mejoras en Formularios**:
+  - Formulario `StockMovementType` mejorado con campos completamente configurados
+  - Campos deshabilitados (fecha, usuario creador) visibles pero no editables en modo edición
+  - Validaciones exhaustivas con mensajes en español
+  - Documentación detallada de cada campo y comportamiento
+
+- **Interfaz de Usuario (UI/UX)**:
+  - Plantillas unificadas usando `partials/_card.html.twig` para consistencia visual
+  - Templates mejorados: `index.html.twig`, `show.html.twig`, `new.html.twig`, `edit.html.twig`
+  - Badges de colores para tipos de movimiento (ENTRADA verde, SALIDA roja, AJUSTE amarilla)
+  - Iconos FontAwesome en todos los enlaces del menú lateral
+  - Nuevo enlace "Movimientos de Stock" en el menú administrativo
+
+- **Documentación Completa**:
+  - Docblocks extensos en `StockMovementController` explicando flujo de cada método
+  - Comentarios detallados en `StockMovementType` diferenciando creación vs edición
+  - Anotaciones en `StockMovementService` sobre reglas de negocio
+  - Notas sobre mejoras futuras (restricciones de edición, eliminación con reglas)
+
+### Technical
+- Estructura de carpetas organizada (Service, Form, Controller, Templates)
+- Migraciones ejecutadas correctamente (fecha: 2025-11-08)
+- Integración bidireccional de entidades (Product ↔ StockMovement ↔ User)
+- Manejo de errores con excepciones personalizadas (`InvalidArgumentException`, `Exception`)
+- Validación server-side con Symfony Validator
+
+### Changed
+- Ruta base del controlador: `/admin/stock/movement` (consistente con producto)
+- Menú lateral ahora incluye iconos para mejor identificación visual
+- Templates refactorizados para usar sistema de card y partials
+
 ## [v1.11.0] - 2025-11-07
 
 ### Added

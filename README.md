@@ -10,9 +10,9 @@
 
 Proyecto en Symfony para llevar el control de los productos de una empresa: catálogo, categorías, usuarios, inventario, compras/ventas y reportes. Actualmente en desarrollo activo.
 
-Estado actual: v1.11.0 — Sistema de Inventario (Fase 1): Implementación base con nueva entidad StockMovement (validaciones exhaustivas, relaciones con Product/User), enum TipoMovimiento (ENTRADA/SALIDA/AJUSTE), soporte para referencias de documentos (OC, facturas), timestamps automáticos, y base para futuras características (almacenes, valorización).
+Estado actual: v1.12.0 — Sistema de Inventario (Fase 2 - COMPLETA): Controlador `StockMovementController` totalmente integrado con servicio `StockMovementService`, formulario dinámico con opción `is_edit` para campos de solo lectura, interfaz visual mejorada con card pattern, menú lateral actualizado con iconos FontAwesome, validaciones exhaustivas, auditoría automática (fecha y usuario), y documentación completa. Sistema completamente funcional para gestionar movimientos de stock (entradas, salidas, ajustes).
 
-• Changelog: ver [v1.11.0 en CHANGELOG.md](CHANGELOG.md#v1110---2025-11-07) · Tag: [v1.11.0](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.11.0)
+• Changelog: ver [v1.12.0 en CHANGELOG.md](CHANGELOG.md#v1120---2025-11-09) · Tag: [v1.12.0](https://github.com/jhonatanfdez/symfony-proyecto/releases/tag/v1.12.0)
 
 ## Instalación y ejecución
 
@@ -93,6 +93,7 @@ Notas:
 
 ## Novedades recientes
 
+- v1.12.0: **Sistema de Inventario (Fase 2 - COMPLETA)** 🚀 - Controlador `StockMovementController` integrado con servicio `StockMovementService`, inyección de dependencias automática, manejo de excepciones con mensajes flash contextualizados, formulario dinámico `StockMovementType` con opción `is_edit` (campos de solo lectura: fecha, usuario creador), interfaz visual mejorada con card pattern (`partials/_card.html.twig`), badges de colores para tipos de movimiento, menú lateral con iconos FontAwesome (fa-home, fa-user, fa-users, fa-tags, fa-flask, fa-box, fa-cubes), enlace "Movimientos de Stock", plantillas unificadas en `home/base.html.twig`, validaciones exhaustivas server-side, auditoría automática de fecha/usuario, documentación completa con docblocks, y 3 commits organizados.
 - v1.11.0: **Sistema de Inventario (Fase 1)** 🎯 - Nueva entidad StockMovement con campos completos (cantidad, fecha, notas, referencias), validaciones exhaustivas (@Assert), relaciones con Product/User, enum TipoMovimiento (ENTRADA/SALIDA/AJUSTE) con validación en BD, timestamps automáticos, soporte para documentos relacionados (OC, facturas) y base para futuras características (almacenes, valorización).
 - v1.10.0: **Sistema completo de imágenes de productos** 🎉 - Carousel Bootstrap 5 en show (layout 50/50), subida de imágenes al crear producto con redirección automática al show, botón "Eliminar todas", validación con SweetAlert2, mensajes de error específicos, y corrección de eliminación en cascada (ON DELETE CASCADE).
 - v1.9.1: Controlador ProductImageController (subida y eliminación individual, base) y parámetro `uploads_products_dir` en configuración.
@@ -111,9 +112,118 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
 - Ventas y clientes (opcional)
 - Reportes (inventario, rotación, ventas, compras)
 
-## Funcionalidades actuales (v1.11.0)
+## Funcionalidades actuales (v1.12.0)
 
-- **Sistema de Inventario (Fase 1)** 🎯 NUEVO
+- **Sistema de Inventario (Fase 2 - COMPLETA)** 🚀 NUEVO
+  
+  - **Controlador `StockMovementController`** completamente integrado con servicio
+    - Rutas bajo `/admin/stock/movement`: 
+      - `GET /` → index (listado con tabla de movimientos)
+      - `GET /new`, `POST /new` → new (crear movimiento con servicio)
+      - `GET /{id}` → show (detalles del movimiento)
+      - `GET /{id}/edit`, `POST /{id}/edit` → edit (editar con campos deshabilitados)
+      - `POST /{id}` → delete (eliminar con reverso de stock)
+    - **Inyección de `StockMovementService`** en constructor para centralizar lógica
+    - **Manejo automático de auditoría**:
+      - Fecha: capturada al crear (hoy), no editable en edición
+      - Usuario: autenticado capturado automáticamente (createBy), no editable
+    - **Mensajes flash contextualizados en español**:
+      - Éxito: "Movimiento creado/actualizado/eliminado correctamente"
+      - Error: excepciones con mensajes descriptivos (stock insuficiente, cantidad inválida, etc.)
+      - Validación: errores de formulario
+    - **Manejo robusto de excepciones**:
+      - `InvalidArgumentException`: violación de reglas de negocio (stock insuficiente)
+      - `Exception`: errores generales con fallback graceful
+      - Docblocks completos explicando flujo, parámetros y excepciones
+  
+  - **Servicio `StockMovementService`** con lógica de negocio centralizada
+    - Inyección de dependencias: `EntityManager`, `StockMovementRepository`, `Validator`
+    - **Método `createMovement(Product, int, TipoMovimiento, User, ...)`**:
+      - Valida cantidad (no cero, no negativa)
+      - Verifica stock disponible (para SALIDA/AJUSTE)
+      - Actualiza stock del producto automáticamente
+      - Crea movimiento con auditoría (fecha actual, usuario autenticado)
+      - Persiste en BD
+      - Lanza excepciones si falla validación
+    - **Método `deleteMovement(StockMovement)`**:
+      - Revierte cambios de stock (suma/resta inversa según tipo)
+      - Aplica reglas restricción: solo elimina movimientos de hoy, solo el último por producto
+      - Verifica que no cause stock negativo
+      - Elimina movimiento y persiste
+    - **Método `getMovementHistory(Product)`**:
+      - Retorna historial ordenado por fecha descendente
+      - Usado en `show.html.twig` para mostrar contexto
+    - **Método `calcularStockAnterior(StockMovement)`**:
+      - Recalcula estado de stock previo al movimiento
+      - Usado para auditoría y cálculos
+    - **Método helper `canDeleteMovement(StockMovement): bool`**:
+      - Verifica si puede eliminarse (reglas de negocio)
+    - **Documentación exhaustiva**:
+      - Docblocks completos con @param, @return, @throws
+      - Comentarios en línea explicando lógica compleja
+      - Notas sobre mejoras futuras (restricciones por almacén, etc.)
+  
+  - **Formulario dinámico `StockMovementType`** con opción condicional
+    - **Opción `is_edit`** (boolean): controla visibilidad de campos
+    - **Modo creación** (`is_edit=false`, por defecto):
+      - Campos editables: cantidad, tipo, descripción, producto
+      - Campos no mostrados: fecha, createBy (se capturan en servicio)
+    - **Modo edición** (`is_edit=true`):
+      - Campos editables: cantidad, tipo, descripción, producto
+      - Campos deshabilitados (readonly) para auditoría:
+        - `fecha` (TextType): muestra fecha de creación formateada
+        - `createBy` (TextType): muestra nombre del usuario creador o email
+      - Estos campos son solo informativos (disabled + readonly en HTML)
+    - **Campos detallados**:
+      - `cantidad` (IntegerType): min 0, required, help text "Cantidad del movimiento"
+      - `tipo` (ChoiceType): enum TipoMovimiento (ENTRADA, SALIDA, AJUSTE), required
+      - `descripcion` (TextareaType): optional, help text "Detalles adicionales"
+      - `product` (EntityType): query builder filtra productos activos, required
+    - **Validaciones exhaustivas**:
+      - Cantidad obligatoria, no cero, no negativa
+      - Tipo obligatorio, debe estar en enum
+      - Producto obligatorio, debe estar activo
+      - Mensajes en español para cada validación
+    - **Docblocks detallados** explicando estrategia `is_edit` vs opciones alternativas
+  
+  - **Interfaz de usuario visual y funcional**
+    - **Plantillas heredan `home/base.html.twig`**:
+      - `index.html.twig`: tabla con producto, cantidad, tipo (badge color), fecha, usuario, acciones (Ver, Editar, Eliminar)
+      - `new.html.twig`: formulario para crear movimiento con título "Nuevo Movimiento"
+      - `edit.html.twig`: formulario para editar con campos de solo lectura, botón eliminar incluido
+      - `show.html.twig`: vista detallada en 2 columnas con badges, fechas formateadas, historial de movimientos
+      - `_form.html.twig`: formulario reutilizable con botones Cancelar/Guardar
+      - `_delete_form.html.twig`: confirmación con SweetAlert2 en español
+    - **Uso de `partials/_card.html.twig`** para consistencia visual con módulo Productos
+      - Bloque `content` en lugar de `body`
+      - Padding uniforme, bordes redondeados, sombras suaves
+    - **Badges de colores según tipo de movimiento**:
+      - Verde: ENTRADA ✓ (aumento de stock)
+      - Roja: SALIDA ✗ (disminución de stock)
+      - Amarilla con texto oscuro: AJUSTE ⚠️ (corrección)
+    - **Menú lateral actualizado con iconos FontAwesome 6**:
+      - Nuevo enlace: "Movimientos de Stock" con icono fa-cubes (1.12.0)
+      - Todos los enlaces del menú con iconos: fa-home, fa-user, fa-users, fa-tags, fa-flask, fa-box, fa-cubes
+      - Mejora en UX: identificación rápida de secciones
+    - **Fechas formateadas** con locale España (formato: dd/mm/yyyy hh:mm)
+    - **Botones accionables** con iconos: Editar (fa-edit), Ver (fa-eye), Eliminar (fa-trash), Cancelar, Guardar
+  
+  - **Validaciones exhaustivas server-side**:
+    - Cantidad: no cero, no negativa, validación en entidad y servicio
+    - Tipo: debe estar en enum TipoMovimiento, validación en BD (CHECK constraint)
+    - Descripción: obligatoria para tipo AJUSTE (validación en servicio)
+    - Producto: debe estar activo, debe existir, validación en formulario
+    - Stock: validación de suficiencia antes de SALIDA (regla de negocio)
+    - Usuario creador: capturado automáticamente, no editado por usuario
+  
+  - **Auditoría automática completa**:
+    - `fecha`: timestamp de creación (no editable post-creación)
+    - `createBy`: usuario autenticado que creó el movimiento (no editable)
+    - `updatedAt`: actualizado en cada edición (automático Doctrine)
+    - Permite rastrear completo: quién creó, cuándo, qué cambió en ediciones posteriores
+    - Campos visibles en modo edición pero deshabilitados (solo lectura)
+
+- **Sistema de Inventario (Fase 1)** 🎯
   - Nueva entidad `StockMovement` para registro de movimientos
     - Campos: cantidad, fecha, tipo de movimiento, notas, referencias
     - Relaciones: producto (`ManyToOne`), usuario (`ManyToOne`)
@@ -130,7 +240,7 @@ Construir un sistema interno que permita a una empresa gestionar su catálogo de
     - Preparado para agregar almacenes
     - Soporte para documentos relacionados
     - Base para reportes de valorización
-  
+
 - Autenticación (login/logout) con UI moderna y branding AquaPanel
   - Redirección automática desde `/home` al login si no está autenticado (con flash "Acceso denegado")
   - Registro con campos: email, contraseña, nombre, fecha de nacimiento
