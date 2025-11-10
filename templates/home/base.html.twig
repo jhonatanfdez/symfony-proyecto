@@ -322,38 +322,51 @@
 				<ul class="nav flex-column">
 					<li class="nav-item text-uppercase text-muted small" style="pointer-events: none;">Usuarios</li>
 					<li class="nav-item">
-						<a class="nav-link {{ current_route == 'app_home' ? 'active' : '' }}" href="{{ path('app_home') }}">Inicio</a>
+						<a class="nav-link {{ current_route == 'app_home' ? 'active' : '' }}" href="{{ path('app_home') }}">
+							<i class="fas fa-home me-2"></i>Inicio
+						</a>
 					</li>
 
-
-					<li
-						class="nav-item">
+					<li class="nav-item">
 						{# Perfil (show, edit) #}
-						<a class="nav-link {{ current_route starts with 'app_profile_' ? 'active' : '' }}" href="{{ path('app_profile_show') }}">Mi perfil</a>
+						<a class="nav-link {{ current_route starts with 'app_profile_' ? 'active' : '' }}" href="{{ path('app_profile_show') }}">
+							<i class="fas fa-user me-2"></i>Mi perfil
+						</a>
 					</li>
-
 
 					{% if is_granted('ROLE_ADMIN') %}
 						<li class="nav-item text-uppercase text-muted small" style="pointer-events: none;">Administrativa</li>
 
-						<li
-							class="nav-item">
+						<li class="nav-item">
 							{# Cualquier ruta que empiece por app_user_ (index, new, show, edit) #}
-							<a class="nav-link {{ current_route starts with 'app_user_' ? 'active' : '' }}" href="{{ path('app_user_index') }}">Usuarios</a>
+							<a class="nav-link {{ current_route starts with 'app_user_' ? 'active' : '' }}" href="{{ path('app_user_index') }}">
+								<i class="fas fa-users me-2"></i>Usuarios
+							</a>
 						</li>
 
-						<li
-							class="nav-item">
+						<li class="nav-item">
 							{# Cualquier ruta que empiece por app_categoria_ #}
-							<a class="nav-link {{ current_route starts with 'app_categoria_' ? 'active' : '' }}" href="{{ path('app_categoria_index') }}">Categorías</a>
+							<a class="nav-link {{ current_route starts with 'app_categoria_' ? 'active' : '' }}" href="{{ path('app_categoria_index') }}">
+								<i class="fas fa-tags me-2"></i>Categorías
+							</a>
 						</li>
 
 						<li class="nav-item">
-							<a class="nav-link {{ current_route == 'app_prueba' ? 'active' : '' }}" href="{{ path('app_prueba') }}">Prueba</a>
+							<a class="nav-link {{ current_route == 'app_prueba' ? 'active' : '' }}" href="{{ path('app_prueba') }}">
+								<i class="fas fa-flask me-2"></i>Prueba
+							</a>
 						</li>
 
 						<li class="nav-item">
-							<a class="nav-link {{ current_route == 'app_product_index' ? 'active' : '' }}" href="{{ path('app_product_index') }}">Productos</a>
+							<a class="nav-link {{ current_route starts with 'app_product_' ? 'active' : '' }}" href="{{ path('app_product_index') }}">
+								<i class="fas fa-box me-2"></i>Productos
+							</a>
+						</li>
+
+						<li class="nav-item">
+							<a class="nav-link {{ current_route starts with 'app_stock_movement_' ? 'active' : '' }}" href="{{ path('app_stock_movement_index') }}">
+								<i class="fas fa-cubes me-2"></i>Movimientos de Stock
+							</a>
 						</li>
 					{% endif %}
 				</ul>
